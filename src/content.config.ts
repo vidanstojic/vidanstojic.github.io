@@ -21,7 +21,7 @@ const projects = defineCollection({
     team: z.string().optional(),
     context: z.string(),
     status: z.enum(['complete', 'in-progress']).default('complete'),
-    repo: z.string().url().optional(),
+    repo: z.url().optional(),
     featured: z.boolean().default(false),
     /** Lower comes first among featured projects. */
     order: z.number().default(100),
