@@ -1,0 +1,115 @@
+---
+/**
+ * The stack diagram: every project placed on the layer it lives in.
+ * Rendered top-down (interface first); each band is darker than the one
+ * above it, so the page literally gets deeper toward the kernel.
+ */
+import type { CollectionEntry } from 'astro:content';
+import { LAYERS } from '../content.config';
+import { LAYER_INFO } from '../site';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+}
+
+const { projects } = Astro.props;
+const topDown = [...LAYERS].reverse();
+const byLayer = (layer: string) =>
+  projects
+    .filter((p) => p.data.layer === layer)
+    .sort((a, b) => a.data.order - b.data.order);
+---
+
+<ol class="stack" aria-label="Projects by layer, from interface down to kernel">
+  {
+    topDown.map((layer, i) => (
+      <li class={`band band--${layer}`} style={`--depth: ${topDown.length - 1 - i}`}>
+        <div class="band-name">
+          <h3>{LAYER_INFO[layer].name}</h3>
+          <p>{LAYER_INFO[layer].blurb}</p>
+        </div>
+        <ul class="band-projects">
+          {byLayer(layer).map((p) => (
+            <li>
+              <a href={`/projects/${p.id}/`} class:list={{ featured: p.data.featured }}>
+                {p.data.title}
+              </a>
+              {p.data.status === 'in-progress' && <span class="wip">in progress</span>}
+            </li>
+          ))}
+        </ul>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .stack {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .band {
+    display: grid;
+    grid-template-columns: minmax(10rem, 15rem) 1fr;
+    gap: 0.5rem 2rem;
+    align-items: baseline;
+    padding: 1.4rem var(--gutter);
+    animation: settle 600ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    /* Deepest layer settles first, then each layer above it. */
+    animation-delay: calc(var(--depth) * 90ms);
+  }
+  .band--interface { background: var(--s-interface); }
+  .band--services { background: var(--s-services); }
+  .band--data { background: var(--s-data); }
+  .band--language { background: var(--s-language); }
+  .band--kernel { background: var(--s-kernel); }
+
+  .band-name h3 {
+    font-size: var(--step-1);
+  }
+  .band-name p {
+    color: var(--muted);
+    font-size: var(--step--1);
+    margin-top: 0.2rem;
+  }
+  .band-projects {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.75rem;
+  }
+  .band-projects a {
+    color: var(--paper);
+    text-decoration-color: var(--rule);
+  }
+  .band-projects a:hover {
+    color: var(--sodium);
+    text-decoration-color: currentColor;
+  }
+  .band-projects a.featured {
+    font-weight: 700;
+  }
+  .wip {
+    color: var(--muted);
+    font-size: var(--step--1);
+    font-style: italic;
+    margin-left: 0.4rem;
+  }
+
+  @keyframes settle {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .band {
+      grid-template-columns: 1fr;
+      padding-block: 1.2rem;
+    }
+  }
+</style>

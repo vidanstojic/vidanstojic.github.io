@@ -1,0 +1,176 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Stack from '../components/Stack.astro';
+import ProjectRow from '../components/ProjectRow.astro';
+import { SITE } from '../site';
+
+const projects = await getCollection('projects');
+const featured = projects
+  .filter((p) => p.data.featured)
+  .sort((a, b) => a.data.order - b.data.order);
+
+const toolkit = [
+  { group: 'Languages', items: 'Kotlin, Java, C, C++, C#, Python, TypeScript' },
+  { group: 'Android', items: 'Jetpack Compose, Room, Hilt, WorkManager, Coroutines' },
+  { group: 'Backend', items: 'Spring Boot, Ktor, PostgreSQL, RabbitMQ, WebSocket, Docker' },
+  { group: 'Web and desktop', items: 'Angular, JavaFX' },
+  { group: 'Systems', items: 'xv6, Linux, ANTLR, Git' },
+];
+---
+
+<Base>
+  <section class="hero wrap">
+    <h1>I build software from the kernel to the screen.</h1>
+    <p class="lede">
+      I'm Vidan, a final-year software engineering student at the School of Computing (RAF) in
+      Belgrade. Most of my work is Android apps and backend services, and I've also written a
+      compiler and changed an operating system kernel to understand what sits underneath them.
+    </p>
+  </section>
+
+  <section id="work" class="work" aria-labelledby="work-title">
+    <div class="wrap section-head">
+      <h2 id="work-title">Work, layer by layer</h2>
+      <p>Every project sits on the layer of the stack it lives in. Bold ones are written up below.</p>
+    </div>
+    <Stack projects={projects} />
+  </section>
+
+  <section class="selected wrap" aria-labelledby="selected-title">
+    <h2 id="selected-title">Selected projects</h2>
+    {featured.map((p) => <ProjectRow project={p} />)}
+  </section>
+
+  <section id="about" class="about wrap" aria-labelledby="about-title">
+    <h2 id="about-title">About</h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          I like problems where the details matter: a state machine that has to stay consistent
+          when the network drops, a day boundary that breaks statistics, a page table that two
+          processes share. I try to keep the core logic plain and testable and push the framework
+          code to the edges.
+        </p>
+        <p>
+          I also tutor C, C++, Java and C#, which keeps me honest about explaining why code works,
+          not only that it does. Outside of code I follow the banking sector and train boxing and
+          table tennis.
+        </p>
+      </div>
+      <dl class="toolkit">
+        {
+          toolkit.map((t) => (
+            <div>
+              <dt>{t.group}</dt>
+              <dd>{t.items}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section id="contact" class="contact wrap" aria-labelledby="contact-title">
+    <h2 id="contact-title">Contact</h2>
+    <p>I'm looking for a graduate or junior role. The fastest way to reach me:</p>
+    <ul class="contact-links">
+      {SITE.email && <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>}
+      {SITE.linkedin && <li><a href={SITE.linkedin}>LinkedIn</a></li>}
+      <li><a href={SITE.github}>GitHub</a></li>
+      {SITE.cv && <li><a href={SITE.cv}>CV (PDF)</a></li>}
+    </ul>
+    <p class="where">{SITE.location}</p>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding-block: clamp(3rem, 10vw, 7.5rem) clamp(2.5rem, 6vw, 4.5rem);
+  }
+  .hero h1 {
+    max-width: 14ch;
+  }
+  .lede {
+    margin-top: 1.75rem;
+    font-size: var(--step-1);
+    line-height: 1.5;
+    max-width: 52ch;
+    color: var(--paper);
+  }
+
+  .section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    padding-bottom: 1.25rem;
+  }
+  .section-head p {
+    color: var(--muted);
+    font-size: var(--step--1);
+    max-width: 44ch;
+  }
+  /* Bands span the full width; their content lines up with the wrap. */
+  .work :global(.band) {
+    padding-inline: max(var(--gutter), calc((100vw - var(--wrap)) / 2 + var(--gutter)));
+  }
+
+  .selected {
+    padding-top: 5rem;
+  }
+  .selected h2 {
+    margin-bottom: 1.5rem;
+  }
+
+  .about,
+  .contact {
+    padding-top: 5rem;
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 2rem 4rem;
+    margin-top: 1.5rem;
+  }
+  .about-text p + p {
+    margin-top: 1rem;
+  }
+  .toolkit {
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  .toolkit dt {
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+  .toolkit dd {
+    margin: 0.1rem 0 0;
+    color: var(--muted);
+  }
+
+  .contact > p {
+    margin-top: 1rem;
+  }
+  .contact-links {
+    list-style: none;
+    padding: 0;
+    margin: 1.25rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+    font-size: var(--step-1);
+  }
+  .where {
+    color: var(--muted);
+    margin-top: 1.25rem;
+  }
+
+  @media (max-width: 48rem) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

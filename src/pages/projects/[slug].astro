@@ -1,0 +1,112 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { SITE, LAYER_INFO } from '../../site';
+
+export async function getStaticPaths() {
+  const projects = (await getCollection('projects')).sort(
+    (a, b) => Number(b.data.featured) - Number(a.data.featured) || a.data.order - b.data.order,
+  );
+  return projects.map((project, i) => ({
+    params: { slug: project.id },
+    props: { project, next: projects[(i + 1) % projects.length] },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  next: CollectionEntry<'projects'>;
+}
+
+const { project, next } = Astro.props;
+const { title, summary, layer, stack, team, context, status, repo } = project.data;
+const { Content } = await render(project);
+---
+
+<Base title={`${title} — ${SITE.name}`} description={summary}>
+  <article class="wrap project">
+    <p class="back"><a href="/#work">All projects</a></p>
+    <h1>{title}</h1>
+    <p class="summary">{summary}</p>
+
+    <dl class="facts">
+      <div><dt>Layer</dt><dd>{LAYER_INFO[layer].name}</dd></div>
+      <div><dt>Context</dt><dd>{context}</dd></div>
+      {team && <div><dt>Team</dt><dd>{team}</dd></div>}
+      <div><dt>Status</dt><dd>{status === 'in-progress' ? 'In progress' : 'Complete'}</dd></div>
+      <div class="wide"><dt>Built with</dt><dd>{stack.join(', ')}</dd></div>
+      {repo && <div class="wide"><dt>Source</dt><dd><a href={repo}>{repo.replace('https://', '')}</a></dd></div>}
+    </dl>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <nav class="next" aria-label="Next project">
+      <span>Next project</span>
+      <a href={`/projects/${next.id}/`}>{next.data.title}</a>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .project {
+    padding-top: clamp(2rem, 6vw, 4rem);
+  }
+  .back {
+    font-size: var(--step--1);
+    margin-bottom: 2rem;
+  }
+  h1 {
+    font-size: clamp(2.25rem, 1.5rem + 3.5vw, 4rem);
+    max-width: 18ch;
+  }
+  .summary {
+    font-size: var(--step-1);
+    line-height: 1.5;
+    margin-top: 1.25rem;
+    max-width: 54ch;
+  }
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.25rem 2rem;
+    margin: 2.5rem 0 3rem;
+    padding: 1.5rem 0;
+    border-block: 1px solid var(--rule);
+  }
+  .facts .wide {
+    grid-column: span 2;
+  }
+  .facts dt {
+    color: var(--muted);
+    font-size: var(--step--1);
+  }
+  .facts dd {
+    margin: 0.15rem 0 0;
+    overflow-wrap: anywhere;
+  }
+  .next {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--rule);
+  }
+  .next span {
+    color: var(--muted);
+    font-size: var(--step--1);
+  }
+  .next a {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-2);
+    text-decoration: none;
+  }
+  @media (max-width: 48rem) {
+    .facts {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
