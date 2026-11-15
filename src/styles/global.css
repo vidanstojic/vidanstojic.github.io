@@ -267,55 +267,49 @@ img, video { max-width: 100%; height: auto; }
 /* View Transitions: keep the cross-fade short and calm */
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.28s; }
 
-/* ---------- Scroll animations (only when JS is on, so content never stays hidden) ---------- */
+/* ---------- Scroll-linked animations (only when JS is on, so content never stays hidden) ----------
+   JS sets --p on each block: 0 while it sits below the bottom edge, rising to 1 as it scrolls
+   into view. Everything below is a function of --p, so scrolling down brings blocks in and
+   scrolling up sends them back out through the bottom edge, at exactly the scroll speed. */
 :root { --ease-out: cubic-bezier(0.16, 1, 0.3, 1); }
 
-/* Blocks rise in, sharpen and fade up as they enter the viewport */
 .js [data-reveal] {
-  opacity: 0;
-  transform: translate3d(0, 48px, 0) scale(0.985);
-  filter: blur(6px);
-  transition:
-    opacity 0.9s var(--ease-out),
-    transform 1.1s var(--ease-out),
-    filter 0.9s var(--ease-out);
-  transition-delay: calc(var(--i, 0) * 90ms);
-  will-change: opacity, transform;
+  --p: 0;
+  --dx: 0px;
+  --dy: 64px;
+  opacity: var(--p);
+  transform: translate3d(calc((1 - var(--p)) * var(--dx)), calc((1 - var(--p)) * var(--dy)), 0)
+    scale(calc(0.96 + var(--p) * 0.04));
+  filter: blur(calc((1 - var(--p)) * 8px));
+  transition: opacity 0.18s linear, transform 0.18s linear, filter 0.18s linear;
+  will-change: opacity, transform, filter;
 }
-.js [data-reveal='left'] { transform: translate3d(-56px, 0, 0); }
-.js [data-reveal='right'] { transform: translate3d(56px, 0, 0); }
-.js [data-reveal='scale'] { transform: scale(0.92); }
-.js [data-reveal='fade'] { transform: none; }
-.js [data-reveal].is-visible { opacity: 1; transform: none; filter: none; }
-/* Leaving is quicker than arriving and has no stagger, so scrolling up feels responsive */
-.js [data-reveal]:not(.is-visible) {
-  transition-duration: 0.45s, 0.55s, 0.45s;
-  transition-delay: 0s;
-}
-.js [data-split]:not(.is-visible) .split-inner { transition-duration: 0.5s; transition-delay: 0s; }
-/* Coming back from above (scrolling up): enter downward instead of upward */
-.js [data-reveal=''][data-from='top']:not(.is-visible) { transform: translate3d(0, -48px, 0) scale(0.985); }
-.js [data-split][data-from='top']:not(.is-visible) .split-inner { transform: translate3d(0, -105%, 0) rotate(-4deg); }
-.js .draw-line:not(.is-visible)::after { transition-duration: 0.4s; transition-delay: 0s; }
+.js [data-reveal='left'] { --dx: -72px; --dy: 0px; }
+.js [data-reveal='right'] { --dx: 72px; --dy: 0px; }
+.js [data-reveal='fade'] { --dy: 0px; }
+.js [data-reveal='scale'] { --dy: 24px; }
+.reveal-measuring [data-reveal], .reveal-measuring [data-split] .split-inner, .reveal-measuring .draw-line::after { transition: none !important; }
+/* First paint: blocks already in view ease in once instead of snapping */
+.reveal-intro [data-reveal] { transition-duration: 0.9s !important; transition-timing-function: var(--ease-out) !important; transition-delay: calc(var(--i, 0) * 80ms) !important; }
+.reveal-intro [data-split] .split-inner { transition: transform 0.9s var(--ease-out) calc(var(--w, 0) * 50ms) !important; }
 
-/* Headings: each word slides up from behind a mask */
+/* Headings: words slide up from behind a mask one after another as --p rises */
 .split-word { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
 .split-inner { display: inline-block; }
+.js [data-split] { --p: 0; }
 .js [data-split] .split-inner {
-  transform: translate3d(0, 105%, 0) rotate(4deg);
+  --pw: clamp(0, calc(var(--p) * 1.7 - var(--w, 0) * 0.12), 1);
+  transform: translate3d(0, calc((1 - var(--pw)) * 110%), 0) rotate(calc((1 - var(--pw)) * 5deg));
   transform-origin: 0 100%;
-  transition: transform 1s var(--ease-out);
-  transition-delay: calc(var(--w, 0) * 55ms + var(--i, 0) * 90ms);
+  transition: transform 0.18s linear;
 }
-.js [data-split].is-visible .split-inner { transform: none; }
 
 /* Accent line that draws itself under section titles */
 .js .draw-line { position: relative; }
 .js .draw-line::after {
   content: ''; position: absolute; left: 0; bottom: -0.6rem; height: 1px; width: 3.5rem; background: #ff4f00;
-  transform: scaleX(0); transform-origin: left; transition: transform 1.1s var(--ease-out) 0.35s;
+  transform: scaleX(clamp(0, calc(var(--p, 1) * 2 - 1), 1)); transform-origin: left; transition: transform 0.18s linear;
 }
-.js .draw-line.is-visible::after { transform: scaleX(1); }
 
 /* Reading progress bar */
 .scroll-progress {
@@ -324,6 +318,7 @@ img, video { max-width: 100%; height: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .js [data-reveal], .js [data-split] { --p: 1 !important; }
   .js [data-reveal] { opacity: 1; transform: none; filter: none; }
   .js [data-split] .split-inner { transform: none; }
   .scroll-progress { display: none; }

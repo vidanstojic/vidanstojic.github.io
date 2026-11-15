@@ -74,8 +74,10 @@ function autoTag() {
 /* ---------- Reading progress + hero parallax (one rAF-throttled scroll handler) ---------- */
 let onScroll;
 function initScrollEffects() {
-    if (onScroll)
+    if (onScroll) {
         window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onScroll);
+    }
     const bar = document.querySelector('[data-progress]');
     const hero = document.querySelector('.hs7-section');
     const heroContent = hero?.querySelector('.hs7-content');
@@ -83,6 +85,7 @@ function initScrollEffects() {
     let ticking = false;
     const update = () => {
         ticking = false;
+        updateReveal();
         const max = document.documentElement.scrollHeight - innerHeight;
         bar?.style.setProperty('--progress', String(max > 0 ? Math.min(1, scrollY / max) : 0));
         if (hero && heroContent && !reduceMotion()) {
@@ -101,41 +104,79 @@ function initScrollEffects() {
         }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
     update();
 }
-/* ---------- Scroll reveal with stagger ---------- */
-let revealObserver;
+/* ---------- Scroll-linked reveal ----------
+ * Each block gets --p from 0 (below the bottom edge) to 1 (fully in view), recomputed on
+ * every scroll frame. Scrolling down raises --p and brings blocks in; scrolling up lowers it
+ * and sends them back out through the bottom edge. Blocks above the fold stay at 1.
+ */
+let revealItems = [];
+let revealResize;
+function measureReveal() {
+    const root = document.documentElement;
+    root.classList.add('reveal-measuring');
+    revealItems.forEach((it) => it.el.style.setProperty('--p', '1'));
+    revealItems.forEach((it) => {
+        const r = it.el.getBoundingClientRect();
+        it.top = r.top + window.scrollY;
+    });
+    revealItems.forEach((it) => it.el.style.setProperty('--p', it.p.toFixed(3)));
+    void document.body.offsetHeight;
+    root.classList.remove('reveal-measuring');
+}
+function updateReveal() {
+    const vh = window.innerHeight;
+    const y = window.scrollY;
+    const start = vh * 0.98; // a block starts arriving as its top crosses the bottom edge
+    const range = Math.max(200, vh * 0.34); // ...and is fully in after this many pixels
+    for (const it of revealItems) {
+        let p = (start - (it.top - y) - it.offset) / range;
+        p = p < 0 ? 0 : p > 1 ? 1 : p;
+        if (Math.abs(p - it.p) > 0.002) {
+            it.p = p;
+            it.el.style.setProperty('--p', p.toFixed(3));
+        }
+    }
+}
 function initReveal() {
-    revealObserver?.disconnect();
     splitHeadings();
     autoTag();
     document.querySelectorAll('[data-stagger]').forEach((group) => {
         Array.from(group.children).forEach((child, i) => {
-            const c = child;
-            c.setAttribute('data-reveal', '');
-            c.style.setProperty('--i', String(Math.min(i, 8)));
+            child.setAttribute('data-reveal', child.getAttribute('data-reveal') ?? '');
+            child.style.setProperty('--i', String(Math.min(i, 8)));
         });
     });
-    const items = document.querySelectorAll('[data-reveal], [data-split]');
-    if (reduceMotion() || !('IntersectionObserver' in window)) {
-        items.forEach((el) => el.classList.add('is-visible'));
+    const els = Array.from(document.querySelectorAll('[data-reveal], [data-split]'));
+    if (reduceMotion()) {
+        els.forEach((el) => el.style.setProperty('--p', '1'));
+        revealItems = [];
         return;
     }
-    // Continuous reveal: every time a block leaves the viewport it resets, and every
-    // time it comes back it animates in again, from whichever edge it enters.
-    revealObserver = new IntersectionObserver((entries) => {
-        for (const e of entries) {
-            const el = e.target;
-            if (e.isIntersecting) {
-                el.classList.add('is-visible');
-            }
-            else {
-                el.dataset.from = e.boundingClientRect.top < 0 ? 'top' : 'bottom';
-                el.classList.remove('is-visible');
-            }
-        }
-    }, { rootMargin: '-4% 0px -8% 0px', threshold: 0 });
-    items.forEach((el) => revealObserver.observe(el));
+    revealItems = els.map((el) => ({
+        el,
+        top: 0,
+        p: 0,
+        // items in a staggered group arrive one after another
+        offset: Number(el.style.getPropertyValue('--i') || 0) * 44,
+    }));
+    measureReveal();
+    // Blocks already on screen ease in once on page load, then follow the scroll.
+    const root = document.documentElement;
+    root.classList.add('reveal-intro');
+    requestAnimationFrame(() => {
+        updateReveal();
+        setTimeout(() => root.classList.remove('reveal-intro'), 1200);
+    });
+    // Re-measure when the layout changes (fonts, images, viewport size).
+    revealResize?.disconnect();
+    revealResize = new ResizeObserver(() => {
+        measureReveal();
+        updateReveal();
+    });
+    revealResize.observe(document.body);
 }
 /* ---------- Spotlight border on cards (follows the cursor) ---------- */
 function initSpotlight() {
