@@ -27,10 +27,89 @@ function updateNav() {
   });
 }
 
+/* ---------- Split headings into words for the masked word-by-word reveal ---------- */
+function splitHeadings() {
+  const targets = document.querySelectorAll<HTMLElement>(
+    'main h1:not(.hs7-title):not([data-split]), main .sec-title:not([data-split]), main .text-h3:not([data-split])',
+  );
+  targets.forEach((el) => {
+    // Only plain-text, visible headings; leave ones with links, icons or hidden parents alone.
+    if (el.children.length > 0 || el.closest('[hidden]')) return;
+    const text = el.textContent?.trim() ?? '';
+    if (!text) return;
+    el.setAttribute('aria-label', text);
+    el.innerHTML = text
+      .split(/\s+/)
+      .map(
+        (w, i) =>
+          `<span class="split-word" aria-hidden="true"><span class="split-inner" style="--w:${i}">${w}</span></span>`,
+      )
+      .join(' ');
+    el.setAttribute('data-split', '');
+    el.removeAttribute('data-reveal');
+    if (el.classList.contains('sec-title')) el.classList.add('draw-line');
+  });
+}
+
+/* Long-form text and repeated blocks reveal one by one without hand-written attributes. */
+function autoTag() {
+  // Animate long-form text paragraph by paragraph instead of as one block.
+  document.querySelectorAll('.prose-tech[data-reveal]').forEach((e) => e.removeAttribute('data-reveal'));
+  const selectors = [
+    '.prose-tech > *',
+    '.principle',
+    '.tech-group',
+    '.tl-item',
+    '.gallery figure',
+    '.cta-band',
+    '.facts-row',
+  ];
+  document.querySelectorAll<HTMLElement>(selectors.join(',')).forEach((el) => {
+    if (!el.hasAttribute('data-reveal') && !el.closest('[data-reveal]:not(.prose-tech)')) {
+      el.setAttribute('data-reveal', '');
+    }
+  });
+  // Layer markers slide in from the left, their project lists from the right.
+  document.querySelectorAll<HTMLElement>('[data-layer] .layer-marker').forEach((el) => el.setAttribute('data-reveal', 'left'));
+}
+
+/* ---------- Reading progress + hero parallax (one rAF-throttled scroll handler) ---------- */
+let onScroll: (() => void) | undefined;
+function initScrollEffects() {
+  if (onScroll) window.removeEventListener('scroll', onScroll);
+  const bar = document.querySelector<HTMLElement>('[data-progress]');
+  const hero = document.querySelector<HTMLElement>('.hs7-section');
+  const heroContent = hero?.querySelector<HTMLElement>('.hs7-content');
+  const heroBg = hero?.querySelector<HTMLElement>('.hs7-bg img');
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const max = document.documentElement.scrollHeight - innerHeight;
+    bar?.style.setProperty('--progress', String(max > 0 ? Math.min(1, scrollY / max) : 0));
+    if (hero && heroContent && !reduceMotion()) {
+      const h = hero.offsetHeight;
+      const p = Math.min(1, Math.max(0, scrollY / h));
+      heroContent.style.transform = `translate3d(0, ${p * -60}px, 0)`;
+      heroContent.style.opacity = String(1 - p * 1.3);
+      if (heroBg) heroBg.style.transform = `translate3d(0, ${p * 90}px, 0) scale(${1 + p * 0.06})`;
+    }
+  };
+  onScroll = () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  update();
+}
+
 /* ---------- Scroll reveal with stagger ---------- */
 let revealObserver: IntersectionObserver | undefined;
 function initReveal() {
   revealObserver?.disconnect();
+  splitHeadings();
+  autoTag();
   document.querySelectorAll<HTMLElement>('[data-stagger]').forEach((group) => {
     Array.from(group.children).forEach((child, i) => {
       const c = child as HTMLElement;
@@ -38,7 +117,7 @@ function initReveal() {
       c.style.setProperty('--i', String(Math.min(i, 8)));
     });
   });
-  const items = document.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-visible)');
+  const items = document.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-visible), [data-split]:not(.is-visible)');
   if (reduceMotion() || !('IntersectionObserver' in window)) {
     items.forEach((el) => el.classList.add('is-visible'));
     return;
@@ -52,7 +131,7 @@ function initReveal() {
         }
       }
     },
-    { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+    { rootMargin: '0px 0px -10% 0px', threshold: 0.12 },
   );
   items.forEach((el) => revealObserver!.observe(el));
 }
@@ -236,6 +315,7 @@ function initContactForm() {
 export function initPage() {
   updateNav();
   initReveal();
+  initScrollEffects();
   initSpotlight();
   initLayerSpy();
   initLightbox();

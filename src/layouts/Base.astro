@@ -54,7 +54,7 @@ const isContact = path.startsWith('/contact');
             <a
               data-nav="/contact"
               aria-current={isContact ? 'page' : undefined}
-              class="nav-cta border border-accent-60 px-3 py-1_5 font-mono text-10 uppercase tracking-16 text-accent transition-colors hover-bg-accent hover-text-0a"
+              class="nav-cta border border-accent-60 px-3 py-1_5 font-mono text-10 uppercase tracking-16 text-accent"
               href="/contact/">Contact</a
             >
           </nav>
@@ -80,6 +80,7 @@ const isContact = path.startsWith('/contact');
     </div>
 
     <div class="toast" role="status" aria-live="polite" data-toast></div>
+    <div class="scroll-progress" aria-hidden="true" data-progress transition:persist></div>
 
     <script>
       import { initPage } from '../scripts/interactions';

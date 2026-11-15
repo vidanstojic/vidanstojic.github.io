@@ -131,6 +131,19 @@ const topics = ['Job offer', 'Collaboration', 'Private lessons', 'Other'];
   .contact-card:hover {
     border-color: #ff4f00;
     background: rgba(255, 79, 0, 0.04);
+    transform: translateY(-3px);
+  }
+  .contact-card {
+    transition:
+      border-color 0.3s,
+      background-color 0.3s,
+      transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .contact-card :global(svg) {
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .contact-card:hover :global(svg) {
+    transform: translate(2px, -2px);
   }
   .contact-action {
     display: inline-flex;

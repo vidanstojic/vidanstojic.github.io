@@ -267,14 +267,89 @@ img, video { max-width: 100%; height: auto; }
 /* View Transitions: keep the cross-fade short and calm */
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.28s; }
 
-/* Scroll reveal (only when JS is on, so content never stays hidden) */
+/* ---------- Scroll animations (only when JS is on, so content never stays hidden) ---------- */
+:root { --ease-out: cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* Blocks rise in, sharpen and fade up as they enter the viewport */
 .js [data-reveal] {
-  opacity: 0; transform: translateY(18px);
-  transition: opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
-  transition-delay: calc(var(--i, 0) * 70ms);
+  opacity: 0;
+  transform: translate3d(0, 48px, 0) scale(0.985);
+  filter: blur(6px);
+  transition:
+    opacity 0.9s var(--ease-out),
+    transform 1.1s var(--ease-out),
+    filter 0.9s var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 90ms);
+  will-change: opacity, transform;
 }
-.js [data-reveal].is-visible { opacity: 1; transform: none; }
-@media (prefers-reduced-motion: reduce) { .js [data-reveal] { opacity: 1; transform: none; } }
+.js [data-reveal='left'] { transform: translate3d(-56px, 0, 0); }
+.js [data-reveal='right'] { transform: translate3d(56px, 0, 0); }
+.js [data-reveal='scale'] { transform: scale(0.92); }
+.js [data-reveal='fade'] { transform: none; }
+.js [data-reveal].is-visible { opacity: 1; transform: none; filter: none; }
+
+/* Headings: each word slides up from behind a mask */
+.split-word { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.split-inner { display: inline-block; }
+.js [data-split] .split-inner {
+  transform: translate3d(0, 105%, 0) rotate(4deg);
+  transform-origin: 0 100%;
+  transition: transform 1s var(--ease-out);
+  transition-delay: calc(var(--w, 0) * 55ms + var(--i, 0) * 90ms);
+}
+.js [data-split].is-visible .split-inner { transform: none; }
+
+/* Accent line that draws itself under section titles */
+.js .draw-line { position: relative; }
+.js .draw-line::after {
+  content: ''; position: absolute; left: 0; bottom: -0.6rem; height: 1px; width: 3.5rem; background: #ff4f00;
+  transform: scaleX(0); transform-origin: left; transition: transform 1.1s var(--ease-out) 0.35s;
+}
+.js .draw-line.is-visible::after { transform: scaleX(1); }
+
+/* Reading progress bar */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 60; pointer-events: none;
+  background: linear-gradient(90deg, #ff4f00, #ff8a4f); transform-origin: 0 50%; transform: scaleX(var(--progress, 0));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] { opacity: 1; transform: none; filter: none; }
+  .js [data-split] .split-inner { transform: none; }
+  .scroll-progress { display: none; }
+}
+
+/* ---------- Hover transitions for every button and button-like link ---------- */
+a, button, summary { transition: color 0.25s var(--ease-out), background-color 0.25s var(--ease-out), border-color 0.25s var(--ease-out), opacity 0.25s; }
+
+/* Fill that sweeps in from the left */
+.btn, .hs7-cta, .nav-cta { position: relative; overflow: hidden; isolation: isolate; }
+.btn::before, .hs7-cta::before, .nav-cta::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; background: #ff4f00;
+  transform: scaleX(0); transform-origin: right; transition: transform 0.45s var(--ease-out);
+}
+.btn:hover::before, .btn:focus-visible::before,
+.hs7-cta:hover::before, .hs7-cta:focus-visible::before,
+.nav-cta:hover::before, .nav-cta:focus-visible::before { transform: scaleX(1); transform-origin: left; }
+.hs7-cta:hover, .hs7-cta:focus-visible, .nav-cta:hover { background: none; color: #0a0a0a; }
+.btn { transition: color 0.35s var(--ease-out), border-color 0.35s var(--ease-out), transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out); }
+.btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -12px rgba(255, 79, 0, 0.55); }
+.btn:active { transform: translateY(0); }
+.btn-line:hover { background: none; color: #0a0a0a; }
+.btn-ghost::before { background: #f2f2f2; }
+.btn-ghost:hover { background: none; color: #0a0a0a; border-color: #f2f2f2; box-shadow: 0 10px 30px -12px rgba(255, 255, 255, 0.25); }
+.btn-solid::before { background: #ff8a4f; }
+.btn svg, .hs7-cta svg { transition: transform 0.35s var(--ease-out); }
+.btn:hover svg { transform: translateX(3px); }
+.btn:hover svg[class*='arrow-up'] { transform: translate(2px, -2px); }
+
+.icon-btn { transition: border-color 0.25s, color 0.25s, transform 0.25s var(--ease-out), background-color 0.25s; }
+.icon-btn:hover { transform: translateY(-1px); background: rgba(255, 79, 0, 0.08); }
+.tech { transition: border-color 0.25s, color 0.25s; }
+.tech:hover { border-color: rgba(255, 79, 0, 0.6); color: #f2f2f2; }
+.tag-accent { transition: background-color 0.25s, color 0.25s; }
+.tabs a { transition: color 0.25s; }
+.tabs a::after { transition: transform 0.35s var(--ease-out); }
 
 /* Header: active page indicator */
 .nav-link { position: relative; padding-block: 0.4rem; }
