@@ -29,7 +29,14 @@ const isContact = path.startsWith('/contact');
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary" />
-    <script is:inline>document.documentElement.classList.add('js');</script>
+    <script is:inline>
+      // Scroll animations hide content until JS reveals it. If the script ever fails
+      // to load, drop the flag after 2.5 s so the page is still fully readable.
+      document.documentElement.classList.add('js');
+      setTimeout(function () {
+        if (!window.__vsReady) document.documentElement.classList.remove('js');
+      }, 2500);
+    </script>
     <ClientRouter fallback="swap" />
   </head>
   <body>
@@ -82,9 +89,6 @@ const isContact = path.startsWith('/contact');
     <div class="toast" role="status" aria-live="polite" data-toast></div>
     <div class="scroll-progress" aria-hidden="true" data-progress transition:persist></div>
 
-    <script>
-      import { initPage } from '../scripts/interactions';
-      document.addEventListener('astro:page-load', initPage);
-    </script>
+    <script is:inline type="module" src="/scripts/site.js"></script>
   </body>
 </html>
