@@ -24,7 +24,7 @@ export const SITE = {
    * Undefined: the form sends through FormSubmit (https://formsubmit.co) to `email`;
    * FormSubmit asks the owner to confirm the address once, on the first message.
    */
-  web3formsKey: undefined as string | undefined,
+  web3formsKey: 'edc578ae-c931-4923-a237-4ae68e937133' as string | undefined,
 };
 
 export const NAV = [
