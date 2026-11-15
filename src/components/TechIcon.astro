@@ -1,0 +1,66 @@
+---
+/** A technology with its brand icon (Simple Icons), or a lettered glyph when no icon exists. */
+import {
+  siKotlin,
+  siAndroid,
+  siJetpackcompose,
+  siSpringboot,
+  siKtor,
+  siPostgresql,
+  siRabbitmq,
+  siDocker,
+  siLinux,
+  siGit,
+  siPython,
+  siTypescript,
+  siC,
+  siCplusplus,
+  siAngular,
+  siOpenjdk,
+  siGradle,
+} from 'simple-icons';
+
+interface Props {
+  name: string;
+}
+const { name } = Astro.props;
+
+const ICONS: Record<string, { path: string; hex: string }> = {
+  Kotlin: siKotlin,
+  Android: siAndroid,
+  'Jetpack Compose': siJetpackcompose,
+  'Spring Boot': siSpringboot,
+  Ktor: siKtor,
+  PostgreSQL: siPostgresql,
+  RabbitMQ: siRabbitmq,
+  Docker: siDocker,
+  Linux: siLinux,
+  Git: siGit,
+  Python: siPython,
+  TypeScript: siTypescript,
+  C: siC,
+  'C++': siCplusplus,
+  Angular: siAngular,
+  Java: siOpenjdk,
+  Gradle: siGradle,
+};
+const icon = ICONS[name];
+// Brand colours that would vanish on a near-black background get a light fallback.
+const brand = icon ? (['000000', '0F0F11', '02303A', '003B57'].includes(icon.hex) ? 'f2f2f2' : icon.hex) : undefined;
+const glyph = name.replace(/[^A-Za-z#+]/g, '').slice(0, 2);
+---
+
+<li class="tech-item" style={brand ? `--brand:#${brand}` : undefined}>
+  {
+    icon ? (
+      <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d={icon.path} />
+      </svg>
+    ) : (
+      <span class="glyph" aria-hidden="true">
+        {glyph}
+      </span>
+    )
+  }
+  {name}
+</li>

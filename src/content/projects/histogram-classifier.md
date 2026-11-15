@@ -9,6 +9,16 @@ repo: https://github.com/vidanstojic/Parallel-algorithms
 order: 70
 ---
 
+## Problem and goal
+
+Predict the category of an image from its colors alone, and do it in a strictly functional style.
+
+## Architecture and technical decisions
+
 - Builds RGB histograms with configurable bin counts and averages them into a profile per class.
 - Classifies an unknown image by cosine similarity between its histogram and each class profile.
-- Written only with `map`, `filter`, `reduce`, lambdas and iterators: no explicit loops and no comprehensions, even for utilities such as length.
+
+## Challenges and how they were solved
+
+- **No loops allowed.** Everything is written with `map`, `filter`, `reduce`, lambdas and iterators: no explicit loops and no comprehensions, even for utilities such as length.
+- **Memory with large image sets.** Lazy iterators process images one at a time instead of loading them all.

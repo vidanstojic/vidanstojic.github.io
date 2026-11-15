@@ -1,0 +1,62 @@
+---
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  items: { src: ImageMetadata; alt: string; caption?: string }[];
+}
+const { items } = Astro.props;
+
+const isSvg = (m: ImageMetadata) => m.format === 'svg';
+const prepared = await Promise.all(
+  items.map(async (it) => {
+    if (isSvg(it.src)) return { ...it, thumb: it.src.src, full: it.src.src };
+    const thumb = await getImage({ src: it.src, width: 720, format: 'webp' });
+    const full = await getImage({ src: it.src, width: 1800, format: 'webp' });
+    return { ...it, thumb: thumb.src, full: full.src };
+  }),
+);
+---
+
+{
+  prepared.length > 0 && (
+    <>
+      <div class="gallery" data-stagger>
+        {prepared.map((it) => (
+          <figure style="margin:0">
+            <button
+              type="button"
+              data-gallery-item
+              data-full={it.full}
+              data-alt={it.alt}
+              data-caption={it.caption ?? ''}
+              aria-label={`Enlarge: ${it.alt}`}
+            >
+              <img src={it.thumb} alt={it.alt} loading="lazy" decoding="async" />
+              {it.caption && <figcaption>{it.caption}</figcaption>}
+            </button>
+          </figure>
+        ))}
+      </div>
+
+      <dialog class="lightbox" data-lightbox aria-label="Image viewer">
+        <img src="" alt="" />
+        <div class="lightbox-bar">
+          <p data-lightbox-caption />
+          <div class="flex items-center gap-2">
+            <span class="font-mono text-11 text-white-45" data-lightbox-count />
+            <button class="icon-btn" type="button" data-lightbox-prev aria-label="Previous image">
+              ‹
+            </button>
+            <button class="icon-btn" type="button" data-lightbox-next aria-label="Next image">
+              ›
+            </button>
+            <button class="icon-btn" type="button" data-lightbox-close aria-label="Close">
+              ✕
+            </button>
+          </div>
+        </div>
+      </dialog>
+    </>
+  )
+}

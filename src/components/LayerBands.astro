@@ -1,0 +1,54 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { LAYERS } from '../content.config';
+import { LAYER_INFO } from '../site';
+import Icon from './Icon.astro';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+}
+const { projects } = Astro.props;
+const topDown = [...LAYERS].reverse();
+---
+
+<ol aria-label="Projects by layer, from interface down to kernel">
+  {
+    topDown.map((layer, i) => (
+      <li
+        id={layer}
+        data-layer={layer}
+        style={`background-color:${LAYER_INFO[layer].bg}`}
+        class:list={['anchor border-t border-white-10', { 'is-active': i === 0 }]}
+      >
+        <div class="site-wrap grid gap-5 py-9 md-cols-200-1 md-gap-10">
+          <div class="layer-marker border-l-2 pl-4 transition-colors duration-300" data-reveal>
+            <p class="font-mono text-10 uppercase tracking-20 text-white-35">{LAYER_INFO[layer].addr}</p>
+            <h3 class="mt-1_5 font-display text-15 uppercase tracking-12 text-f2">{LAYER_INFO[layer].name}</h3>
+            <p class="mt-1_5 text-12_5 leading-snug text-white-40">{LAYER_INFO[layer].blurb}</p>
+          </div>
+          <ul class="divide-y divide-white-07" data-stagger>
+            {projects
+              .filter((p) => p.data.layer === layer)
+              .sort((a, b) => a.data.order - b.data.order)
+              .map((p) => (
+                <li class="flex flex-wrap items-baseline gap-x-3 gap-y-1_5 py-2_5">
+                  <a
+                    class:list={[
+                      'group inline-flex items-baseline gap-1_5 font-mono text-14_5 transition-colors hover-text-accent',
+                      p.data.featured ? 'text-f2' : 'text-white-50',
+                    ]}
+                    href={`/projects/${p.id}/`}
+                  >
+                    {p.data.title}
+                    <Icon name="arrow-up-right" class="icon-sm -translate-x-1 opacity-0 transition-all group-hover-show" />
+                  </a>
+                  {p.data.status !== 'complete' && <span class="wip">in progress</span>}
+                  <span class="hidden lg-inline text-12_5 text-white-30">{p.data.context}</span>
+                </li>
+              ))}
+          </ul>
+        </div>
+      </li>
+    ))
+  }
+</ol>

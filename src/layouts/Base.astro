@@ -1,6 +1,7 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
-import { SITE } from '../site';
+import { SITE, NAV } from '../site';
 
 interface Props {
   title?: string;
@@ -9,6 +10,8 @@ interface Props {
 
 const { title = SITE.title, description = SITE.description } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const path = Astro.url.pathname;
+const isContact = path.startsWith('/contact');
 ---
 
 <!doctype html>
@@ -26,27 +29,41 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <ClientRouter fallback="swap" />
   </head>
   <body>
     <div class="min-h-screen bg-0a">
-      <header class="sticky top-0 z-50 border-b border-white-10 bg-0a-90">
+      <header class="site-header sticky top-0 z-50 border-b border-white-10 bg-0a-90" transition:persist>
         <div class="site-wrap flex h-16 items-center justify-between gap-4">
           <a class="flex items-baseline gap-2_5" aria-label={`${SITE.name}, home`} href="/">
             <span class="font-mono text-13 tracking-tight text-f2">{SITE.name}</span>
             <span class="hidden sm-inline font-mono text-10 uppercase tracking-18 text-white-40">{SITE.role}</span>
           </a>
           <nav class="flex items-center gap-5 sm-gap-7" aria-label="Main">
-            <a class="nav-link" data-status="active" href="/#work">Work</a>
-            <a class="nav-link" data-status="active" href="/#about">About</a>
+            {
+              NAV.map((n) => {
+                const active = path.startsWith(n.match);
+                return (
+                  <a class="nav-link" data-nav={n.match} aria-current={active ? 'page' : undefined} href={n.href}>
+                    {n.label}
+                  </a>
+                );
+              })
+            }
             <a
-              class="border border-accent-60 px-3 py-1_5 font-mono text-10 uppercase tracking-16 text-accent transition-colors hover-bg-accent hover-text-0a"
-              href="/#contact">Contact</a
+              data-nav="/contact"
+              aria-current={isContact ? 'page' : undefined}
+              class="nav-cta border border-accent-60 px-3 py-1_5 font-mono text-10 uppercase tracking-16 text-accent transition-colors hover-bg-accent hover-text-0a"
+              href="/contact/">Contact</a
             >
           </nav>
         </div>
       </header>
 
-      <slot />
+      <div transition:animate="fade">
+        <slot />
+      </div>
 
       <footer class="border-t border-white-10 bg-05 py-10">
         <div class="site-wrap flex flex-col gap-5 sm-flex-row sm-items-center sm-justify-between">
@@ -56,10 +73,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
           <div class="flex flex-wrap items-center gap-5 font-mono text-11 uppercase tracking-14">
             <a href={SITE.github} target="_blank" rel="noreferrer" class="link-line text-white-60 hover-text-f2">GitHub</a>
             {SITE.linkedin && <a href={SITE.linkedin} target="_blank" rel="noreferrer" class="link-line text-white-60 hover-text-f2">LinkedIn</a>}
-            {SITE.email && <a href={`mailto:${SITE.email}`} class="link-line text-white-60 hover-text-f2">Email</a>}
+            <a href="/contact/" class="link-line text-white-60 hover-text-f2">Contact</a>
           </div>
         </div>
       </footer>
     </div>
+
+    <div class="toast" role="status" aria-live="polite" data-toast></div>
+
+    <script>
+      import { initPage } from '../scripts/interactions';
+      document.addEventListener('astro:page-load', initPage);
+    </script>
   </body>
 </html>

@@ -8,14 +8,27 @@ export const SITE = {
   description:
     'Software engineering student in Belgrade. Android apps, backend services, compilers and OS kernels.',
   location: 'Belgrade, Serbia',
+  availability: 'Open to graduate and junior roles, and to interesting projects',
   github: 'https://github.com/vidanstojic',
   githubHandle: '@vidanstojic',
   linkedin: 'https://www.linkedin.com/in/vidanstojic' as string | undefined,
   linkedinHandle: 'in/vidanstojic',
-  email: 'vidan@vidanstojic.me' as string | undefined,
-  /** Path under /public, e.g. '/vidan-stojic-cv.pdf'. Undefined shows "PDF on request". */
+  email: 'vidan@vidanstojic.me',
+  /** Path under /public, e.g. '/vidan-stojic-cv.pdf'. Undefined: "CV on request". */
   cv: undefined as string | undefined,
+  /** Profile photo in src/assets, e.g. 'profile.jpg'. Undefined: monogram. */
+  photo: undefined as string | undefined,
+  /**
+   * Web3Forms access key (https://web3forms.com). It is public by design.
+   * Undefined: the contact form opens the visitor's email app instead.
+   */
+  web3formsKey: undefined as string | undefined,
 };
+
+export const NAV = [
+  { href: '/projects/', label: 'Work', match: '/projects' },
+  { href: '/about/', label: 'About', match: '/about' },
+] as const;
 
 /** Layers top-down; `bg` gets darker with depth, `addr` is the layer's "address". */
 export const LAYER_INFO = {

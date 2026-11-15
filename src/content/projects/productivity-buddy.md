@@ -8,7 +8,18 @@ context: University project
 order: 30
 ---
 
+## Problem and goal
+
+Show, live, how computer time splits between work, fun and everything else, based on the processes that are actually running.
+
+## Architecture and technical decisions
+
 - **Multi-module Maven build:** data service, OS scanner, analytics engine and JavaFX view, each with one responsibility.
-- **Real-time scanner** that polls running processes at a configurable interval through OSHI.
-- **Categories, aliases and freezing:** tag a process as Work, Fun or Other, give it a friendly name, or pause its time tracking.
-- **Persistence and export:** state survives restarts as JSON, a file watcher reloads external edits, and CSV snapshots are exported on a schedule.
+- **Real-time scanner** that polls running processes at a configurable interval (1 s by default) through OSHI.
+- **Categories, aliases and freezing:** tag a process as Work, Fun or Other, give it a friendly name, or pause its time tracking without killing it.
+
+## Challenges and how they were solved
+
+- **State that survives restarts.** Categories, aliases, total time and freeze state are stored as JSON.
+- **Edits made outside the app.** A file watcher reloads the JSON mapping when it is changed externally.
+- **Getting data out.** CSV snapshots are exported on a schedule or at times the user picks.

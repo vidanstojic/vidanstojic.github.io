@@ -9,10 +9,17 @@ repo: https://github.com/vidanstojic/Banka-1-Backend
 order: 10
 ---
 
-A backend split into services for accounts, cards, clients, employees, credits, transactions, transfers, currency exchange, orders and stocks, behind an API gateway, with PostgreSQL for storage and RabbitMQ for messaging.
+## Problem and goal
 
-## How the team worked
+Model the backend of a bank: clients and employees, accounts and cards, credits, transactions and transfers, currency exchange, and trading orders and stocks. A large team had to work on it in parallel without breaking each other's services.
 
-- Every push runs four automatic checks through Git hooks and GitHub Actions: tests for every service, Checkstyle linting, documentation checks and OpenAPI validation.
-- Each service must ship a README with Docker Compose instructions, environment variables and endpoint examples, plus an OpenAPI specification.
-- Shared infrastructure (database, broker, notification and user services) starts with one Docker Compose file.
+## Architecture and technical decisions
+
+- **One service per domain** (accounts, cards, clients, employees, credits, transactions, transfers, exchange, orders, stocks, notifications, verification) behind an API gateway.
+- **PostgreSQL** for storage and **RabbitMQ** for messaging between services.
+- **Shared infrastructure in one command.** The database, the broker and the notification and user services start with a single Docker Compose file.
+
+## Challenges and how they were solved
+
+- **Keeping a large codebase consistent.** Every `git push` runs four checks through Git hooks and again in GitHub Actions: tests for every service, Checkstyle linting, documentation checks and OpenAPI validation.
+- **Documentation that keeps up.** Each service must ship a README with Docker Compose instructions, environment variables and endpoint examples, plus an OpenAPI specification. Pushes without them are rejected.

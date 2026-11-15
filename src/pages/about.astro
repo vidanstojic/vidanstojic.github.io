@@ -1,0 +1,195 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import TechIcon from '../components/TechIcon.astro';
+import Icon from '../components/Icon.astro';
+import type { ImageMetadata } from 'astro';
+import { SITE } from '../site';
+
+// Profile photo: drop the file in src/assets/ and set SITE.photo to its name.
+const photos = import.meta.glob<{ default: ImageMetadata }>('../assets/profile.*', { eager: true });
+const photo = SITE.photo ? photos[`../assets/${SITE.photo}`]?.default : undefined;
+
+const principles = [
+  {
+    title: 'Plain core, frameworks at the edges',
+    text: 'Business rules live in plain code with no Android, Spring or UI types. Framework classes are thin adapters, so the core is tested with fast unit tests and no emulator.',
+  },
+  {
+    title: 'Know what runs underneath',
+    text: "I've changed a kernel's page tables and written a bytecode VM. When an app is slow or a number is wrong, I want to know which layer is responsible.",
+  },
+  {
+    title: 'One source of truth',
+    text: 'One writer for usage data in Focus Flow, one authoritative server in Draft Duel. Several Focus Flow bugs came from two places writing the same data.',
+  },
+  {
+    title: 'Explain it simply',
+    text: 'Tutoring taught me that if I cannot explain why code works, I do not understand it yet. I write docs and commit messages for the next reader.',
+  },
+];
+
+/* Newest first. Only dates that are confirmed; more entries can be added here. */
+const timeline = [
+  { when: 'Now', kind: 'Education', title: 'Final year, School of Computing (RAF)', text: 'Software engineering, one exam away from graduating.', now: true },
+  { when: 'Oct 2026', kind: 'Project', title: 'Draft Duel specification', text: 'Rules, architecture, protocol and MVP plan for a 1v1 auction game.' },
+  { when: '2026', kind: 'Project', title: 'Focus Flow', text: 'Screen-time and focus app for Android, preparing for Google Play.' },
+  { when: '2024/25', kind: 'Course project', title: 'Report generator', text: 'Plugin-based reporting library and CLI, Software Components course.' },
+  { when: 'Ongoing', kind: 'Teaching', title: 'Private tutor', text: 'Private lessons in C, C++, Java and C#.' },
+];
+
+const stack = [
+  { group: 'Android', items: ['Android', 'Jetpack Compose', 'Room', 'Hilt', 'WorkManager', 'Coroutines'] },
+  { group: 'Backend', items: ['Spring Boot', 'Ktor', 'PostgreSQL', 'RabbitMQ', 'Docker', 'WebSocket'] },
+  { group: 'Systems', items: ['C', 'xv6', 'Linux', 'ANTLR', 'Git', 'Gradle'] },
+  { group: 'Languages', items: ['Kotlin', 'Java', 'C++', 'C#', 'Python', 'TypeScript'] },
+];
+---
+
+<Base title={`About — ${SITE.name}`} description="Who I am, how I work, and what I've built so far.">
+  <main>
+    <section class="site-wrap pt-20 pb-14 md-pt-24">
+      <div class="about-hero" data-reveal>
+        <div class="avatar">
+          {
+            photo ? (
+              <Image src={photo} alt={`Portrait of ${SITE.name}`} width={320} height={320} />
+            ) : (
+              <div class="mono-mark" aria-label={`${SITE.name} monogram`}>
+                V<span>S</span>
+              </div>
+            )
+          }
+        </div>
+        <div>
+          <span class="pill"><span class="hs7-dot" aria-hidden="true"></span>{SITE.availability}</span>
+          <h1 class="mt-5 max-w-3xl font-display text-h1 font-medium leading-105 tracking-tight">
+            Hi, I'm Vidan.
+          </h1>
+          <p class="mt-5 max-w-2xl text-17 leading-relaxed text-white-70">
+            A final-year software engineering student at the School of Computing (RAF) in {SITE.location}. I build
+            Android apps and backend services, and I like knowing what happens beneath them.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-white-10 bg-08 py-20">
+      <div class="site-wrap grid gap-12 md-cols-075-125 md-gap-16">
+        <h2 class="sec-title" data-reveal>My story</h2>
+        <div data-stagger>
+          <p class="mb-5 text-16_5 leading-175 text-white-75">
+            At RAF I've worked across the whole stack. Changing the xv6 kernel to share memory between processes, adding
+            symbolic links to its file system and writing a compiler with its own virtual machine showed me how much
+            happens under a single line of application code.
+          </p>
+          <p class="mb-5 text-16_5 leading-175 text-white-75">
+            Today most of my work is higher up the stack. Focus Flow, my screen-time app for Android, reconstructs app
+            sessions from raw system events and enforces limits with a rules engine written in plain Kotlin. On the
+            backend I've built a cloud-platform simulation with Spring Boot and its own security layer, and worked in a
+            team on a microservice backend for a banking system.
+          </p>
+          <p class="mb-5 text-16_5 leading-175 text-white-75">
+            I also tutor C, C++, Java and C#. Explaining a pointer or a race condition to someone else is still the best
+            test of whether I understand it myself.
+          </p>
+          <p class="mb-5 text-16_5 leading-175 text-white-75">
+            Outside of code I follow the banking and finance sector, and I train boxing and table tennis.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-white-10 py-20">
+      <div class="site-wrap">
+        <h2 class="sec-title" data-reveal>How I think about problems</h2>
+        <div class="mt-10 grid gap-10 sm-grid-cols-2" data-stagger>
+          {
+            principles.map((p, i) => (
+              <div class="principle">
+                <p class="num">0{i + 1}</p>
+                <h3 class="mt-3 font-display text-17 font-medium text-f2">{p.title}</h3>
+                <p class="mt-3 text-15 leading-relaxed text-white-60">{p.text}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-white-10 bg-08 py-20">
+      <div class="site-wrap grid gap-12 md-cols-075-125 md-gap-16">
+        <div data-reveal>
+          <h2 class="sec-title">Path so far</h2>
+          <p class="mt-4 text-15 leading-relaxed text-white-55">Education, teaching and the projects that shaped how I work.</p>
+        </div>
+        <ol class="timeline" data-stagger>
+          {
+            timeline.map((t) => (
+              <li class:list={['tl-item', { 'is-now': t.now }]}>
+                <span class="tl-when">{t.when}</span>
+                <div class="tl-body">
+                  <p class="tl-kind">{t.kind}</p>
+                  <h3 class="mt-1_5 font-display text-17 font-medium text-f2">{t.title}</h3>
+                  <p class="mt-1_5 text-15 leading-relaxed text-white-60">{t.text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section class="border-t border-white-10 py-20">
+      <div class="site-wrap">
+        <div class="flex flex-wrap items-end justify-between gap-4" data-reveal>
+          <h2 class="sec-title">Tech stack and tools</h2>
+          <p class="text-15 text-white-55">What I reach for, grouped by where it runs.</p>
+        </div>
+        <div class="mt-10 grid gap-4 sm-grid-cols-2" data-stagger>
+          {
+            stack.map((g) => (
+              <div class="tech-group">
+                <h3 class="font-mono text-10 uppercase tracking-18 text-accent">{g.group}</h3>
+                <ul class="tech-list">
+                  {g.items.map((it) => (
+                    <TechIcon name={it} />
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-white-10 bg-05 py-20">
+      <div class="site-wrap">
+        <div class="cta-band grid gap-6 md-cols-1-1 md-items-end" data-reveal>
+          <div>
+            <h2 class="sec-title">Want to work together?</h2>
+            <p class="mt-4 text-15 leading-relaxed text-white-70">The fastest way to reach me is the contact page.</p>
+          </div>
+          <div class="flex flex-wrap gap-3 md-justify-end">
+            <a class="btn btn-solid" href="/contact/">Contact me <Icon name="arrow-right" class="icon-sm" /></a>
+            <a class="btn btn-ghost" href="/projects/">See the work</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .about-hero {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+  @media (min-width: 720px) {
+    .about-hero {
+      grid-template-columns: auto 1fr;
+      gap: 3rem;
+    }
+  }
+</style>

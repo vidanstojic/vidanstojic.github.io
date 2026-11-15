@@ -1,0 +1,39 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import ProjectShell from '../../../layouts/ProjectShell.astro';
+import Gallery from '../../../components/Gallery.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+const { project } = Astro.props;
+const { Content } = await render(project);
+const gallery = project.data.gallery;
+const onlyDiagrams = gallery.length > 0 && gallery.every((g) => g.src.format === 'svg');
+---
+
+<ProjectShell project={project}>
+  <div class="max-w-38">
+    <div class="prose-tech" data-reveal>
+      <Content />
+    </div>
+  </div>
+  {
+    gallery.length > 0 && (
+      <section class="mt-14" aria-labelledby="gallery-title">
+        <h2 id="gallery-title" class="label">
+          {onlyDiagrams ? 'Diagrams' : 'Gallery'}
+        </h2>
+        <p class="mt-2 text-12_5 text-white-40">Select an image to enlarge it.</p>
+        <div class="mt-5">
+          <Gallery items={gallery} />
+        </div>
+      </section>
+    )
+  }
+</ProjectShell>

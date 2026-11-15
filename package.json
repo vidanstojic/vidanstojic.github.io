@@ -10,7 +10,8 @@
   "dependencies": {
     "@fontsource/inter": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
-    "astro": "^7.4.11"
+    "astro": "^7.4.11",
+    "simple-icons": "^16.38.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",

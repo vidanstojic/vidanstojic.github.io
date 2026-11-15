@@ -1,0 +1,33 @@
+---
+import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
+import ProjectShell from '../../../layouts/ProjectShell.astro';
+
+export async function getStaticPaths() {
+  const subs = await getCollection('subpages');
+  return Promise.all(
+    subs.map(async (sub) => {
+      const [slug, page] = sub.id.split('/');
+      const project = await getEntry('projects', slug);
+      if (!project) throw new Error(`Sub-page ${sub.id} has no project "${slug}"`);
+      return { params: { slug, sub: page }, props: { sub, project } };
+    }),
+  );
+}
+
+interface Props {
+  sub: CollectionEntry<'subpages'>;
+  project: CollectionEntry<'projects'>;
+}
+const { sub, project } = Astro.props;
+const { Content } = await render(sub);
+---
+
+<ProjectShell project={project} current={sub.id} pageTitle={sub.data.tab}>
+  <div class="max-w-38">
+    <h2 class="font-display text-h3 font-medium leading-tight tracking-tight" data-reveal>{sub.data.title}</h2>
+    <p class="mt-3 text-15 leading-relaxed text-white-55" data-reveal>{sub.data.summary}</p>
+    <div class="prose-tech mt-6" data-reveal>
+      <Content />
+    </div>
+  </div>
+</ProjectShell>
