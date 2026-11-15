@@ -116,19 +116,25 @@ function initReveal() {
             c.style.setProperty('--i', String(Math.min(i, 8)));
         });
     });
-    const items = document.querySelectorAll('[data-reveal]:not(.is-visible), [data-split]:not(.is-visible)');
+    const items = document.querySelectorAll('[data-reveal], [data-split]');
     if (reduceMotion() || !('IntersectionObserver' in window)) {
         items.forEach((el) => el.classList.add('is-visible'));
         return;
     }
-    revealObserver = new IntersectionObserver((entries, obs) => {
+    // Two-way reveal: a block animates in when it enters from below (scrolling down)
+    // and animates out again when it drops back below the fold (scrolling up), so it
+    // replays the next time the visitor scrolls down. Blocks that leave through the
+    // top stay visible, so scrolling back up never shows empty space above.
+    revealObserver = new IntersectionObserver((entries) => {
         for (const e of entries) {
             if (e.isIntersecting) {
                 e.target.classList.add('is-visible');
-                obs.unobserve(e.target);
+            }
+            else if (e.boundingClientRect.top > 0) {
+                e.target.classList.remove('is-visible');
             }
         }
-    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.12 });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0 });
     items.forEach((el) => revealObserver.observe(el));
 }
 /* ---------- Spotlight border on cards (follows the cursor) ---------- */

@@ -287,6 +287,13 @@ img, video { max-width: 100%; height: auto; }
 .js [data-reveal='scale'] { transform: scale(0.92); }
 .js [data-reveal='fade'] { transform: none; }
 .js [data-reveal].is-visible { opacity: 1; transform: none; filter: none; }
+/* Leaving is quicker than arriving and has no stagger, so scrolling up feels responsive */
+.js [data-reveal]:not(.is-visible) {
+  transition-duration: 0.45s, 0.55s, 0.45s;
+  transition-delay: 0s;
+}
+.js [data-split]:not(.is-visible) .split-inner { transition-duration: 0.5s; transition-delay: 0s; }
+.js .draw-line:not(.is-visible)::after { transition-duration: 0.4s; transition-delay: 0s; }
 
 /* Headings: each word slides up from behind a mask */
 .split-word { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
