@@ -21,6 +21,12 @@ function toast(message, kind = 'ok') {
 /* ---------- Header: active page indicator (header persists across pages) ---------- */
 function updateNav() {
     const path = location.pathname;
+    document.querySelectorAll('[data-mnav]').forEach((a) => {
+        const m = a.dataset.mnav;
+        const active = a.hasAttribute('data-exact') ? path === m : path.startsWith(m);
+        if (active) a.setAttribute('aria-current', 'page');
+        else a.removeAttribute('aria-current');
+    });
     document.querySelectorAll('[data-nav]').forEach((a) => {
         const active = path.startsWith(a.dataset.nav);
         if (active)
@@ -29,6 +35,41 @@ function updateNav() {
             a.removeAttribute('aria-current');
     });
 }
+/* ---------- Mobile menu (below 768px) ---------- */
+function setMenu(open) {
+    const root = document.documentElement;
+    const toggle = document.querySelector('[data-menu-toggle]');
+    const menu = document.querySelector('[data-mobile-menu]');
+    if (!toggle || !menu) return;
+    root.classList.toggle('menu-open', open);
+    root.classList.toggle('menu-locked', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    menu.setAttribute('aria-hidden', String(!open));
+    menu.querySelectorAll('a').forEach((a) => a.setAttribute('tabindex', open ? '0' : '-1'));
+    if (open) setTimeout(() => menu.querySelector('a')?.focus({ preventScroll: true }), 350);
+}
+function initMobileMenu() {
+    const toggle = document.querySelector('[data-menu-toggle]');
+    const menu = document.querySelector('[data-mobile-menu]');
+    if (!toggle || !menu || toggle.dataset.bound) return;
+    toggle.dataset.bound = '1';
+    toggle.addEventListener('click', () => setMenu(!document.documentElement.classList.contains('menu-open')));
+    // Any link inside closes the menu; so does a tap on the empty area around the links.
+    menu.addEventListener('click', (e) => {
+        if (e.target.closest('a') || !e.target.closest('.mobile-menu-links, .mobile-menu-foot')) setMenu(false);
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && document.documentElement.classList.contains('menu-open')) {
+            setMenu(false);
+            toggle.focus();
+        }
+    });
+    // Leaving the mobile breakpoint (rotating a tablet, resizing) closes it too.
+    window.matchMedia('(min-width: 768px)').addEventListener('change', (e) => e.matches && setMenu(false));
+    document.addEventListener('astro:before-swap', () => setMenu(false));
+}
+
 /* ---------- Split headings into words for the masked word-by-word reveal ---------- */
 function splitHeadings() {
     const targets = document.querySelectorAll('main h1:not(.hs7-title):not([data-split]), main .sec-title:not([data-split]), main .text-h3:not([data-split])');
@@ -382,6 +423,8 @@ function initContactForm() {
     });
 }
 function initPage() {
+    initMobileMenu();
+    setMenu(false);
     window.__vsReady = true;
     updateNav();
     initReveal();

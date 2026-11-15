@@ -21,6 +21,12 @@ const { title = SITE.title, description = SITE.description } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const path = Astro.url.pathname;
 const isContact = path.startsWith('/contact');
+const MOBILE_NAV = [
+  { href: '/', label: 'Home', match: '/', exact: true },
+  { href: '/projects/', label: 'Projects', match: '/projects', exact: false },
+  { href: '/about/', label: 'About', match: '/about', exact: false },
+  { href: '/contact/', label: 'Contact', match: '/contact', exact: false },
+];
 ---
 
 <!doctype html>
@@ -56,7 +62,7 @@ const isContact = path.startsWith('/contact');
             <span class="font-mono text-13 tracking-tight text-f2">{SITE.name}</span>
             <span class="hidden sm-inline font-mono text-10 uppercase tracking-18 text-white-40">{SITE.role}</span>
           </a>
-          <nav class="flex items-center gap-5 sm-gap-7" aria-label="Main">
+          <nav class="site-nav flex items-center gap-5 sm-gap-7" aria-label="Main">
             {
               NAV.map((n) => {
                 const active = path.startsWith(n.match);
@@ -73,6 +79,38 @@ const isContact = path.startsWith('/contact');
               class="nav-cta border border-accent-60 px-3 py-1_5 font-mono text-10 uppercase tracking-16 text-accent"
               href="/contact/">Contact</a
             >
+          </nav>
+          <button
+            class="menu-toggle"
+            type="button"
+            aria-label="Open menu"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+            data-menu-toggle
+          >
+            <span class="menu-toggle-bar"></span>
+            <span class="menu-toggle-bar"></span>
+            <span class="menu-toggle-bar"></span>
+          </button>
+        </div>
+        <div class="mobile-menu" id="mobile-menu" data-mobile-menu aria-hidden="true">
+          <nav class="mobile-menu-panel" aria-label="Mobile">
+            <ul class="mobile-menu-links">
+              {
+                MOBILE_NAV.map((n, i) => (
+                  <li style={`--i:${i}`}>
+                    <a href={n.href} data-mnav={n.match} data-exact={n.exact ? '' : undefined} tabindex="-1">
+                      <span class="mobile-menu-num">0{i + 1}</span>
+                      {n.label}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+            <div class="mobile-menu-foot" style={`--i:${MOBILE_NAV.length}`}>
+              <p class="pill"><span class="hs7-dot" aria-hidden="true"></span>{SITE.availability}</p>
+              <p class="mt-4 font-mono text-12_5 text-white-60">{SITE.email}</p>
+            </div>
           </nav>
         </div>
       </header>

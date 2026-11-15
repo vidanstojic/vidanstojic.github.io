@@ -16,7 +16,15 @@ const words = headline.split(' ');
   <main>
     <section class="hs7-section" aria-label="Introduction">
       <div class="hs7-bg" aria-hidden="true">
-        <img src="/images/hero-strata.webp" alt="" width="1280" height="720" fetchpriority="high" />
+        <img
+          src="/images/hero-strata.webp"
+          srcset="/images/hero-strata-640.webp 640w, /images/hero-strata.webp 1280w"
+          sizes="100vw"
+          alt=""
+          width="1280"
+          height="720"
+          fetchpriority="high"
+        />
       </div>
       <div class="hs7-content">
         <p class="hs7-eyebrow"><span class="hs7-dot" aria-hidden="true"></span>Open to graduate and junior roles</p>

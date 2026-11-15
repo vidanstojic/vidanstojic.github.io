@@ -555,3 +555,143 @@ button[data-state='sending'] .btn-label::after { content: '…'; }
 .prose-tech pre { margin-top: 1.25rem; padding: 1rem 1.1rem; border: 1px solid rgba(255, 255, 255, 0.1); overflow-x: auto; font-size: 12.5px; line-height: 1.6; background: #0d0d0f !important; }
 .prose-tech pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
 .md-justify-end{} @media (min-width:768px){.md-justify-end{justify-content:flex-end}}
+
+/* =========================================================================
+   Mobile and tablet (below 768px) and touch devices.
+   Everything here is scoped to max-width: 767px or (hover: none), so the
+   desktop layout is untouched.
+   ========================================================================= */
+
+/* Hamburger button and menu exist in the markup but only appear below 768px */
+.menu-toggle, .mobile-menu { display: none; }
+
+@media (max-width: 767px) {
+  /* ---------- Header: hamburger instead of the inline nav ---------- */
+  .site-nav { display: none; }
+  .menu-toggle {
+    display: inline-grid; place-content: center; gap: 5px; width: 48px; height: 48px; margin-right: -12px;
+    background: none; border: 0; cursor: pointer; position: relative; z-index: 2; -webkit-tap-highlight-color: transparent;
+  }
+  .menu-toggle-bar {
+    display: block; width: 22px; height: 1.5px; background: #f2f2f2; border-radius: 2px;
+    transition: transform 0.4s var(--ease-out), opacity 0.25s, width 0.3s var(--ease-out);
+  }
+  .menu-toggle-bar:nth-child(2) { width: 16px; justify-self: end; }
+  .menu-open .menu-toggle-bar:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .menu-open .menu-toggle-bar:nth-child(2) { opacity: 0; width: 0; }
+  .menu-open .menu-toggle-bar:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: block; position: fixed; inset: 0; z-index: -1; padding-top: 4rem;
+    background: #0a0a0a;
+    clip-path: inset(0 0 100% 0); visibility: hidden;
+    transition: clip-path 0.55s var(--ease-out), visibility 0s linear 0.55s;
+  }
+  .menu-open .mobile-menu { clip-path: inset(0 0 0 0); visibility: visible; transition: clip-path 0.55s var(--ease-out), visibility 0s; }
+  .mobile-menu-panel {
+    height: 100%; display: flex; flex-direction: column; justify-content: space-between;
+    padding: 2rem clamp(20px, 5vw, 40px) calc(2rem + env(safe-area-inset-bottom)); overflow-y: auto;
+  }
+  .mobile-menu-links { display: grid; }
+  .mobile-menu-links li, .mobile-menu-foot {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.4s var(--ease-out), transform 0.5s var(--ease-out);
+  }
+  .menu-open .mobile-menu-links li, .menu-open .mobile-menu-foot {
+    opacity: 1; transform: none; transition-delay: calc(0.12s + var(--i) * 0.06s);
+  }
+  .mobile-menu-links a {
+    display: flex; align-items: baseline; gap: 1rem; min-height: 64px; padding: 0.9rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: var(--font-display); font-size: clamp(1.9rem, 9vw, 2.6rem); font-weight: 500; letter-spacing: -0.03em;
+    color: #f2f2f2; -webkit-tap-highlight-color: transparent;
+  }
+  .mobile-menu-links a:active { color: #ff6a2b; }
+  .mobile-menu-links a[aria-current='page'] { color: #ff6a2b; }
+  .mobile-menu-num { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em; color: rgba(255, 255, 255, 0.35); }
+  .mobile-menu-foot .pill { max-width: 100%; }
+  html.menu-locked, html.menu-locked body { overflow: hidden; }
+}
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+  .mobile-menu, .mobile-menu-links li, .mobile-menu-foot, .menu-toggle-bar { transition: none !important; }
+}
+
+@media (max-width: 767px) {
+  /* ---------- Typography: scale down, never overflow ---------- */
+  h1, h2, h3, .sec-title, .card-title { overflow-wrap: anywhere; hyphens: auto; }
+  .text-h1 { font-size: clamp(1.75rem, 8.5vw, 2.4rem); line-height: 1.08; }
+  .sec-title, .text-h2 { font-size: clamp(1.45rem, 6.8vw, 1.9rem); line-height: 1.2; }
+  .text-17 { font-size: 16px; }
+  .text-16_5 { font-size: 16px; line-height: 1.7; }
+  .prose-tech p, .prose-tech li { font-size: 15.5px; line-height: 1.7; }
+  .prose-tech table { font-size: 13px; }
+  .hs7-title { font-size: clamp(1.45rem, 7.4vw, 2.2rem); letter-spacing: -0.035em; }
+  .hs7-word { white-space: normal; }
+  .hs7-body { font-size: 15px; }
+
+  /* ---------- Layer bands: one vertical column with room to tap ---------- */
+  [data-layer] .site-wrap { gap: 1rem; padding-block: 2rem; }
+  [data-layer] .layer-marker { padding-block: 0.15rem; }
+  [data-layer] ul > li { flex-direction: column; align-items: flex-start; gap: 0.1rem; padding-block: 0.55rem 0.9rem; }
+  [data-layer] ul > li > a { min-height: 48px; align-items: center; font-size: 15px; }
+  [data-layer] ul > li > .lg-inline { display: block; font-size: 12.5px; line-height: 1.45; }
+
+  /* ---------- Cards and touch targets (48 x 48 minimum) ---------- */
+  .grid-cards { grid-template-columns: 1fr; gap: 0.85rem; }
+  .card { padding: 1.25rem; }
+  .card .card-go { min-height: 48px; padding-top: 0.75rem; }
+  .btn, .hs7-cta { min-height: 48px; padding: 14px 20px; }
+  .tabs a { min-height: 48px; display: inline-flex; align-items: center; }
+  main > a[href='/projects/'], main > a[href='/#work'] { min-height: 48px; }
+  .link-line { display: inline-flex; align-items: center; min-height: 48px; }
+  footer .flex a { padding-block: 0.75rem; }
+  .contact-card { min-height: 64px; }
+  .icon-btn { width: 44px; height: 44px; }
+
+  /* ---------- About: photo above the text, centred ---------- */
+  .about-hero { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .about-hero .avatar { width: 9.5rem; height: 9.5rem; }
+  .about-hero .pill { justify-content: center; text-align: left; }
+  .about-hero p { margin-inline: auto; }
+  .timeline::before { left: 0.25rem; }
+
+  /* ---------- Contact form: full width, keyboard-safe ---------- */
+  .contact-form .grid { grid-template-columns: 1fr; }
+  .field input, .field select, .field textarea { font-size: 16px; min-height: 48px; } /* 16px stops iOS from zooming */
+  .field textarea { min-height: 8.5rem; }
+  .field input, .field select, .field textarea, .contact-form button { scroll-margin-bottom: 7rem; }
+  .contact-form button[type='submit'] { width: 100%; }
+  .toast { bottom: calc(1rem + env(safe-area-inset-bottom)); }
+  .lightbox { width: 100vw; max-height: 100dvh; }
+}
+
+/* ---------- Touch screens: no hover states that stick after a tap ---------- */
+@media (hover: none) {
+  .card:hover { transform: none; border-color: rgba(255, 255, 255, 0.1); }
+  .card:hover::before, .card:hover::after { opacity: 0; }
+  .card:hover .card-title { color: #f2f2f2; }
+  .card:hover .card-go svg { transform: none; }
+  .card:active { border-color: rgba(255, 79, 0, 0.6); }
+  .card:active .card-title { color: #ff6a2b; }
+
+  .btn:hover { transform: none; box-shadow: none; }
+  .btn:hover::before, .hs7-cta:hover::before, .nav-cta:hover::before { transform: scaleX(0); }
+  .btn-line:hover, .hs7-cta:hover { color: #ff6a2b; }
+  .btn-ghost:hover { color: #f2f2f2; border-color: rgba(255, 255, 255, 0.2); }
+  .btn-solid:hover { color: #0a0a0a; }
+  .btn:hover svg { transform: none; }
+  .btn:active::before, .hs7-cta:active::before { transform: scaleX(1); transition-duration: 0.15s; }
+  .btn-line:active, .hs7-cta:active, .btn-ghost:active { color: #0a0a0a; }
+
+  .contact-card:hover { transform: none; border-color: rgba(255, 255, 255, 0.15); background: #0d0d0f; }
+  .contact-card:active { border-color: #ff4f00; background: rgba(255, 79, 0, 0.06); }
+  .tech:hover { border-color: rgba(255, 255, 255, 0.15); color: rgba(255, 255, 255, 0.55); }
+  .tech-item:hover { border-color: rgba(255, 255, 255, 0.07); color: rgba(242, 242, 242, 0.75); }
+  .tech-item:hover svg { color: rgba(242, 242, 242, 0.7); }
+  .icon-btn:hover { transform: none; background: none; }
+  .hs7-ltr:hover { color: inherit; text-shadow: none; }
+  .group:hover .group-hover-show { transform: translateX(-0.25rem); opacity: 0; }
+  .group:hover .group-hover-nudge { transform: none; }
+  .gallery button:hover { border-color: rgba(255, 255, 255, 0.1); }
+  a, button { -webkit-tap-highlight-color: rgba(255, 79, 0, 0.15); }
+}
