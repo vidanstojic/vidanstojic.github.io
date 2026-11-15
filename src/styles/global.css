@@ -497,7 +497,7 @@ button[data-state='sending'] .btn-label::after { content: '…'; }
 
 /* About: profile */
 .avatar {
-  width: 9rem; height: 9rem; border-radius: 22%; overflow: hidden; flex: none; position: relative;
+  width: clamp(8.5rem, 16vw, 11.5rem); height: clamp(8.5rem, 16vw, 11.5rem); border-radius: 22%; overflow: hidden; flex: none; position: relative;
   border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 0 0 6px rgba(255, 79, 0, 0.06), 0 20px 50px rgba(0, 0, 0, 0.55);
   background: radial-gradient(circle at 30% 20%, #2a2a2e, #0d0d0f);
 }

@@ -11,16 +11,18 @@ export const SITE = {
   availability: 'Open to graduate and junior roles, and to interesting projects',
   github: 'https://github.com/vidanstojic',
   githubHandle: '@vidanstojic',
-  linkedin: 'https://www.linkedin.com/in/vidanstojic' as string | undefined,
-  linkedinHandle: 'in/vidanstojic',
-  email: 'vidan@vidanstojic.me',
+  linkedin: 'https://www.linkedin.com/in/vidan-stoji%C4%87-57166032b/' as string | undefined,
+  linkedinHandle: 'in/vidan-stojić',
+  /** Shown on the site and where contact-form messages are delivered. */
+  email: 'vidan.stojic@gmail.com',
   /** Path under /public, e.g. '/vidan-stojic-cv.pdf'. Undefined: "CV on request". */
   cv: undefined as string | undefined,
   /** Profile photo in src/assets, e.g. 'profile.jpg'. Undefined: monogram. */
-  photo: undefined as string | undefined,
+  photo: 'profile.jpg' as string | undefined,
   /**
-   * Web3Forms access key (https://web3forms.com). It is public by design.
-   * Undefined: the contact form opens the visitor's email app instead.
+   * Optional Web3Forms access key (https://web3forms.com). It is public by design.
+   * Undefined: the form sends through FormSubmit (https://formsubmit.co) to `email`;
+   * FormSubmit asks the owner to confirm the address once, on the first message.
    */
   web3formsKey: undefined as string | undefined,
 };

@@ -53,7 +53,7 @@ const stack = [
         <div class="avatar">
           {
             photo ? (
-              <Image src={photo} alt={`Portrait of ${SITE.name}`} width={320} height={320} />
+              <Image src={photo} alt={`Portrait of ${SITE.name}`} width={400} height={400} densities={[1, 2]} loading="eager" />
             ) : (
               <div class="mono-mark" aria-label={`${SITE.name} monogram`}>
                 V<span>S</span>

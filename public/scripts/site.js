@@ -131,8 +131,17 @@ function updateReveal() {
     const y = window.scrollY;
     const start = vh * 0.98; // a block starts arriving as its top crosses the bottom edge
     const range = Math.max(200, vh * 0.34); // ...and is fully in after this many pixels
+    const maxScroll = Math.max(0, document.documentElement.scrollHeight - vh);
     for (const it of revealItems) {
-        let p = (start - (it.top - y) - it.offset) / range;
+        // Scroll positions where this block starts arriving and is fully in.
+        let sStart = it.top + it.offset - start;
+        let sFull = sStart + range;
+        // Blocks near the end of a short page must still finish at the bottom of the scroll.
+        if (sFull > maxScroll) {
+            sFull = maxScroll;
+            sStart = Math.min(sStart, maxScroll - range * 0.6);
+        }
+        let p = sFull <= sStart ? (y >= sFull ? 1 : 0) : (y - sStart) / (sFull - sStart);
         p = p < 0 ? 0 : p > 1 ? 1 : p;
         if (Math.abs(p - it.p) > 0.002) {
             it.p = p;
@@ -313,31 +322,42 @@ function initContactForm() {
         const data = Object.fromEntries(new FormData(form));
         if ((data.botcheck ?? '') !== '')
             return;
-        if (!key) {
-            // No form service configured yet: hand the message to the visitor's email app.
-            const body = `${data.message}\n\n${data.name}\n${data.email}`;
-            location.href = `mailto:${to}?subject=${encodeURIComponent(`[${data.topic}] from ${data.name}`)}&body=${encodeURIComponent(body)}`;
-            toast('Opening your email app…');
-            return;
-        }
         submit.disabled = true;
         submit.dataset.state = 'sending';
         try {
-            const res = await fetch('https://api.web3forms.com/submit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                body: JSON.stringify({
-                    access_key: key,
-                    subject: `Portfolio: ${data.topic} from ${data.name}`,
-                    from_name: 'vidanstojic.me',
-                    name: data.name,
-                    email: data.email,
-                    topic: data.topic,
-                    message: data.message,
-                }),
-            });
+            const subject = `Portfolio: ${data.topic} from ${data.name}`;
+            // Web3Forms when an access key is configured; otherwise FormSubmit, which
+            // relays to the site owner's address (confirmed once by the owner).
+            const res = key
+                ? await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                    body: JSON.stringify({
+                        access_key: key,
+                        subject,
+                        from_name: 'vidanstojic.me',
+                        name: data.name,
+                        email: data.email,
+                        topic: data.topic,
+                        message: data.message,
+                    }),
+                })
+                : await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(to)}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                    body: JSON.stringify({
+                        _subject: subject,
+                        _replyto: data.email,
+                        _template: 'table',
+                        _captcha: 'false',
+                        name: data.name,
+                        email: data.email,
+                        topic: data.topic,
+                        message: data.message,
+                    }),
+                });
             const json = await res.json().catch(() => ({}));
-            if (!res.ok || json.success === false)
+            if (!res.ok || json.success === false || json.success === 'false')
                 throw new Error(json.message || res.statusText);
             form.reset();
             form.hidden = true;
