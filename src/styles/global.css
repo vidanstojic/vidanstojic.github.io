@@ -683,8 +683,6 @@ button[data-state='sending'] .btn-label::after { content: '…'; }
   .btn:active::before, .hs7-cta:active::before { transform: scaleX(1); transition-duration: 0.15s; }
   .btn-line:active, .hs7-cta:active, .btn-ghost:active { color: #0a0a0a; }
 
-  .contact-card:hover { transform: none; border-color: rgba(255, 255, 255, 0.15); background: #0d0d0f; }
-  .contact-card:active { border-color: #ff4f00; background: rgba(255, 79, 0, 0.06); }
   .tech:hover { border-color: rgba(255, 255, 255, 0.15); color: rgba(255, 255, 255, 0.55); }
   .tech-item:hover { border-color: rgba(255, 255, 255, 0.07); color: rgba(242, 242, 242, 0.75); }
   .tech-item:hover svg { color: rgba(242, 242, 242, 0.7); }
@@ -694,4 +692,20 @@ button[data-state='sending'] .btn-label::after { content: '…'; }
   .group:hover .group-hover-nudge { transform: none; }
   .gallery button:hover { border-color: rgba(255, 255, 255, 0.1); }
   a, button { -webkit-tap-highlight-color: rgba(255, 79, 0, 0.15); }
+}
+
+/* ---------- Touch screens: hover look while a finger is on a card ----------
+   site.js adds .is-touch-hover on touchstart (also when the touch turns into a
+   scroll) and removes it shortly after the finger lifts, so nothing sticks. */
+@media (hover: none) {
+  .card.is-touch-hover { border-color: rgba(255, 255, 255, 0.18); transform: translateY(-2px); }
+  .card.is-touch-hover::before, .card.is-touch-hover::after { opacity: 1; }
+  .card.is-touch-hover .card-title { color: #ff6a2b; }
+  .card.is-touch-hover .card-go svg { transform: translateX(4px); }
+  .tech-item.is-touch-hover { border-color: rgba(255, 255, 255, 0.2); color: #f2f2f2; }
+  .tech-item.is-touch-hover svg { color: var(--brand, #ff6a2b); }
+  .gallery button.is-touch-hover { border-color: rgba(255, 79, 0, 0.6); }
+  .group.is-touch-hover { color: #ff6a2b; }
+  .group.is-touch-hover .group-hover-show { transform: translateX(0); opacity: 1; }
+  .group.is-touch-hover .group-hover-nudge { transform: translateX(0.25rem); }
 }

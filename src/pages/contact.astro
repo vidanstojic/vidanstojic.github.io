@@ -128,10 +128,24 @@ const topics = ['Job offer', 'Collaboration', 'Private lessons', 'Other'];
     padding: 1.1rem 1.25rem;
     transition: border-color 0.2s, background-color 0.2s;
   }
-  .contact-card:hover {
+  @media (hover: hover) {
+    .contact-card:hover {
+      border-color: #ff4f00;
+      background: rgba(255, 79, 0, 0.04);
+      transform: translateY(-3px);
+    }
+    .contact-card:hover :global(svg) {
+      transform: translate(2px, -2px);
+    }
+  }
+  /* Touch: the same look while a finger is on the card (class set by site.js) */
+  .contact-card:global(.is-touch-hover) {
     border-color: #ff4f00;
     background: rgba(255, 79, 0, 0.04);
     transform: translateY(-3px);
+  }
+  .contact-card:global(.is-touch-hover) :global(svg) {
+    transform: translate(2px, -2px);
   }
   .contact-card {
     transition:
@@ -141,9 +155,6 @@ const topics = ['Job offer', 'Collaboration', 'Private lessons', 'Other'];
   }
   .contact-card :global(svg) {
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .contact-card:hover :global(svg) {
-    transform: translate(2px, -2px);
   }
   .contact-action {
     display: inline-flex;

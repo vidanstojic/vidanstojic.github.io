@@ -241,6 +241,43 @@ function initSpotlight() {
         });
     });
 }
+/* ---------- Touch: show the hover look while a finger is on a card ---------- */
+const TOUCH_TARGETS = '.card, .contact-card, .tech-item, .gallery button, [data-layer] .group';
+let touchCard = null;
+let touchTimer = 0;
+function placeSpot(card, t) {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', `${t.clientX - r.left}px`);
+    card.style.setProperty('--my', `${t.clientY - r.top}px`);
+}
+function releaseTouchCard() {
+    const card = touchCard;
+    touchCard = null;
+    clearTimeout(touchTimer);
+    // A short hold lets a quick tap still show the effect before it fades out.
+    if (card) touchTimer = setTimeout(() => card !== touchCard && card.classList.remove('is-touch-hover'), 450);
+}
+function initTouchHover() {
+    if (document.documentElement.dataset.touchHover) return;
+    document.documentElement.dataset.touchHover = '1';
+    document.addEventListener('touchstart', (e) => {
+        const card = e.target.closest?.(TOUCH_TARGETS);
+        if (touchCard && touchCard !== card) touchCard.classList.remove('is-touch-hover');
+        touchCard = card;
+        if (!card) return;
+        clearTimeout(touchTimer);
+        placeSpot(card, e.touches[0]);
+        card.classList.add('is-touch-hover');
+    }, { passive: true });
+    document.addEventListener('touchmove', (e) => touchCard && placeSpot(touchCard, e.touches[0]), { passive: true });
+    document.addEventListener('touchend', releaseTouchCard, { passive: true });
+    document.addEventListener('touchcancel', releaseTouchCard, { passive: true });
+    document.addEventListener('astro:before-swap', () => {
+        touchCard?.classList.remove('is-touch-hover');
+        touchCard = null;
+    });
+}
+
 /* ---------- Layer bands: highlight the band in the middle of the viewport ---------- */
 let layerObserver;
 function initLayerSpy() {
@@ -424,6 +461,7 @@ function initContactForm() {
 }
 function initPage() {
     initMobileMenu();
+    initTouchHover();
     setMenu(false);
     window.__vsReady = true;
     updateNav();
