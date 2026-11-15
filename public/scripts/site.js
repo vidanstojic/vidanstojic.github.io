@@ -357,7 +357,11 @@ function initContactForm() {
                     }),
                 });
             const json = await res.json().catch(() => ({}));
-            if (!res.ok || json.success === false || json.success === 'false')
+            const failed = !res.ok || json.success === false || json.success === 'false';
+            // FormSubmit's very first message asks the site owner to activate the form by
+            // email. The message itself is kept and delivered after activation.
+            const needsActivation = /activat/i.test(String(json.message ?? ''));
+            if (failed && !needsActivation)
                 throw new Error(json.message || res.statusText);
             form.reset();
             form.hidden = true;
