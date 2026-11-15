@@ -121,20 +121,20 @@ function initReveal() {
         items.forEach((el) => el.classList.add('is-visible'));
         return;
     }
-    // Two-way reveal: a block animates in when it enters from below (scrolling down)
-    // and animates out again when it drops back below the fold (scrolling up), so it
-    // replays the next time the visitor scrolls down. Blocks that leave through the
-    // top stay visible, so scrolling back up never shows empty space above.
+    // Continuous reveal: every time a block leaves the viewport it resets, and every
+    // time it comes back it animates in again, from whichever edge it enters.
     revealObserver = new IntersectionObserver((entries) => {
         for (const e of entries) {
+            const el = e.target;
             if (e.isIntersecting) {
-                e.target.classList.add('is-visible');
+                el.classList.add('is-visible');
             }
-            else if (e.boundingClientRect.top > 0) {
-                e.target.classList.remove('is-visible');
+            else {
+                el.dataset.from = e.boundingClientRect.top < 0 ? 'top' : 'bottom';
+                el.classList.remove('is-visible');
             }
         }
-    }, { rootMargin: '0px 0px -10% 0px', threshold: 0 });
+    }, { rootMargin: '-4% 0px -8% 0px', threshold: 0 });
     items.forEach((el) => revealObserver.observe(el));
 }
 /* ---------- Spotlight border on cards (follows the cursor) ---------- */

@@ -1,7 +1,16 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { SITE, NAV } from '../site';
+
+// Version the site script by its content so a new deploy is never served from an old cache.
+const scriptVersion = createHash('sha1')
+  .update(readFileSync(join(process.cwd(), 'public/scripts/site.js')))
+  .digest('hex')
+  .slice(0, 10);
 
 interface Props {
   title?: string;
@@ -89,6 +98,6 @@ const isContact = path.startsWith('/contact');
     <div class="toast" role="status" aria-live="polite" data-toast></div>
     <div class="scroll-progress" aria-hidden="true" data-progress transition:persist></div>
 
-    <script is:inline type="module" src="/scripts/site.js"></script>
+    <script is:inline type="module" src={`/scripts/site.js?v=${scriptVersion}`}></script>
   </body>
 </html>

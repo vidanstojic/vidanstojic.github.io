@@ -293,6 +293,9 @@ img, video { max-width: 100%; height: auto; }
   transition-delay: 0s;
 }
 .js [data-split]:not(.is-visible) .split-inner { transition-duration: 0.5s; transition-delay: 0s; }
+/* Coming back from above (scrolling up): enter downward instead of upward */
+.js [data-reveal=''][data-from='top']:not(.is-visible) { transform: translate3d(0, -48px, 0) scale(0.985); }
+.js [data-split][data-from='top']:not(.is-visible) .split-inner { transform: translate3d(0, -105%, 0) rotate(-4deg); }
 .js .draw-line:not(.is-visible)::after { transition-duration: 0.4s; transition-delay: 0s; }
 
 /* Headings: each word slides up from behind a mask */
