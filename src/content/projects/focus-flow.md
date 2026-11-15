@@ -37,3 +37,7 @@ The full design is on the [Architecture](/projects/focus-flow/architecture/) pag
 - **The whole of YouTube counted as Shorts.** Detection matched the text "Shorts" in the bottom navigation tab. It now matches the player's view IDs and requires the player to cover at least 60% of the screen.
 
 Every fix is listed in the [Changelog](/projects/focus-flow/changelog/).
+
+## Privacy
+
+Everything stays on the device: no account, no analytics, no ads and no internet permission. Details are in the [Privacy policy](/projects/focus-flow/privacy/).

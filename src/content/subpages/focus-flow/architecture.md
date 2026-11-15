@@ -54,3 +54,7 @@ The sync runs every 60 s while the screen is on, when the app comes to the foreg
 ## Tests
 
 131 JUnit tests cover the pure Kotlin core, including the real Samsung event order, hour splitting across the DST change on 25 October, rule priority and interval mode, and a check that every database version has a migration.
+
+## Privacy
+
+All of this runs on the device. The app has no internet permission, so usage data never leaves the phone. See the [Privacy policy](/projects/focus-flow/privacy/).
