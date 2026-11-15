@@ -708,4 +708,7 @@ button[data-state='sending'] .btn-label::after { content: '…'; }
   .group.is-touch-hover { color: #ff6a2b; }
   .group.is-touch-hover .group-hover-show { transform: translateX(0); opacity: 1; }
   .group.is-touch-hover .group-hover-nudge { transform: translateX(0.25rem); }
+  /* Fade out slowly instead of snapping off */
+  .card, .card::before, .card::after, .tech-item, .gallery button, .group { transition-duration: 0.6s; }
+  .card .card-title { transition: color 0.6s; }
 }

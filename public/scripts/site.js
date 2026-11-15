@@ -245,36 +245,52 @@ function initSpotlight() {
 const TOUCH_TARGETS = '.card, .contact-card, .tech-item, .gallery button, [data-layer] .group';
 let touchCard = null;
 let touchTimer = 0;
+let fadingCard = null;
+const TOUCH_LINGER = 1200; // ms the look stays after the finger lifts (and after the scroll settles)
 function placeSpot(card, t) {
     const r = card.getBoundingClientRect();
     card.style.setProperty('--mx', `${t.clientX - r.left}px`);
     card.style.setProperty('--my', `${t.clientY - r.top}px`);
 }
-function releaseTouchCard() {
-    const card = touchCard;
-    touchCard = null;
+function scheduleFade() {
     clearTimeout(touchTimer);
-    // A short hold lets a quick tap still show the effect before it fades out.
-    if (card) touchTimer = setTimeout(() => card !== touchCard && card.classList.remove('is-touch-hover'), 450);
+    const card = fadingCard;
+    touchTimer = setTimeout(() => {
+        if (card && card !== touchCard) card.classList.remove('is-touch-hover');
+        if (fadingCard === card) fadingCard = null;
+    }, TOUCH_LINGER);
+}
+function releaseTouchCard(e) {
+    // Some browsers fire touchcancel as soon as a touch turns into a scroll;
+    // keep the card lit while any finger is still down.
+    if (e?.touches?.length) return;
+    if (!touchCard) return;
+    fadingCard = touchCard;
+    touchCard = null;
+    scheduleFade();
 }
 function initTouchHover() {
     if (document.documentElement.dataset.touchHover) return;
     document.documentElement.dataset.touchHover = '1';
     document.addEventListener('touchstart', (e) => {
         const card = e.target.closest?.(TOUCH_TARGETS);
-        if (touchCard && touchCard !== card) touchCard.classList.remove('is-touch-hover');
+        for (const old of [touchCard, fadingCard]) if (old && old !== card) old.classList.remove('is-touch-hover');
+        fadingCard = null;
+        clearTimeout(touchTimer);
         touchCard = card;
         if (!card) return;
-        clearTimeout(touchTimer);
         placeSpot(card, e.touches[0]);
         card.classList.add('is-touch-hover');
     }, { passive: true });
     document.addEventListener('touchmove', (e) => touchCard && placeSpot(touchCard, e.touches[0]), { passive: true });
     document.addEventListener('touchend', releaseTouchCard, { passive: true });
     document.addEventListener('touchcancel', releaseTouchCard, { passive: true });
+    // While the page is still gliding after the finger lifts, keep the card lit.
+    window.addEventListener('scroll', () => fadingCard && scheduleFade(), { passive: true });
     document.addEventListener('astro:before-swap', () => {
         touchCard?.classList.remove('is-touch-hover');
-        touchCard = null;
+        fadingCard?.classList.remove('is-touch-hover');
+        touchCard = fadingCard = null;
     });
 }
 
