@@ -3,21 +3,25 @@
  */
 export const SITE = {
   name: 'Vidan Stojić',
-  title: 'Vidan Stojić — Software Engineer',
+  role: 'Software engineer',
+  title: 'Vidan Stojić — I build software from the kernel to the screen',
   description:
     'Software engineering student in Belgrade. Android apps, backend services, compilers and OS kernels.',
   location: 'Belgrade, Serbia',
   github: 'https://github.com/vidanstojic',
-  linkedin: undefined as string | undefined,
-  email: undefined as string | undefined,
-  /** Path under /public, e.g. '/vidan-stojic-cv.pdf' */
+  githubHandle: '@vidanstojic',
+  linkedin: 'https://www.linkedin.com/in/vidanstojic' as string | undefined,
+  linkedinHandle: 'in/vidanstojic',
+  email: 'vidan@vidanstojic.me' as string | undefined,
+  /** Path under /public, e.g. '/vidan-stojic-cv.pdf'. Undefined shows "PDF on request". */
   cv: undefined as string | undefined,
 };
 
+/** Layers top-down; `bg` gets darker with depth, `addr` is the layer's "address". */
 export const LAYER_INFO = {
-  interface: { name: 'Interface', blurb: 'Apps people touch' },
-  services: { name: 'Services', blurb: 'Servers, APIs, real-time' },
-  data: { name: 'Data', blurb: 'Processing, storage, reports' },
-  language: { name: 'Language', blurb: 'Parsing and interpreting code' },
-  kernel: { name: 'Kernel', blurb: 'Inside the operating system' },
+  interface: { name: 'Interface', blurb: 'Apps people touch', addr: '0x1e00', bg: '#17171a' },
+  services: { name: 'Services', blurb: 'Servers, APIs, real-time', addr: '0x1300', bg: '#121214' },
+  data: { name: 'Data', blurb: 'Processing, storage, reports', addr: '0x0a00', bg: '#0d0d0f' },
+  language: { name: 'Language', blurb: 'Parsing and interpreting code', addr: '0x0400', bg: '#090909' },
+  kernel: { name: 'Kernel', blurb: 'Inside the operating system', addr: '0x0000', bg: '#050505' },
 } as const;

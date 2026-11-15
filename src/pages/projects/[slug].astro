@@ -1,6 +1,7 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
 import { SITE, LAYER_INFO } from '../../site';
 
 export async function getStaticPaths() {
@@ -21,92 +22,76 @@ interface Props {
 const { project, next } = Astro.props;
 const { title, summary, layer, stack, team, context, status, repo } = project.data;
 const { Content } = await render(project);
+
+const facts = [
+  ['Layer', LAYER_INFO[layer].name],
+  ['Context', context],
+  ...(team ? [['Team', team]] : []),
+  ['Status', status === 'in-progress' ? 'In progress' : 'Complete'],
+];
 ---
 
 <Base title={`${title} — ${SITE.name}`} description={summary}>
-  <article class="wrap project">
-    <p class="back"><a href="/#work">All projects</a></p>
-    <h1>{title}</h1>
-    <p class="summary">{summary}</p>
+  <main class="site-wrap py-12 md-py-20">
+    <a
+      class="inline-flex items-center gap-2 font-mono text-10 uppercase tracking-16 text-white-45 transition-colors hover-text-accent"
+      href="/#work"
+    >
+      <Icon name="arrow-left" class="icon-sm" />All projects
+    </a>
+    <div class="mt-9 flex flex-wrap items-center gap-3">
+      <span class="tag-accent">{LAYER_INFO[layer].name} layer</span>
+      {status === 'in-progress' && <span class="wip">in progress</span>}
+    </div>
+    <h1 class="mt-5 max-w-3xl font-display text-h1 font-medium leading-105 tracking-tight">{title}</h1>
+    <p class="mt-5 max-w-2xl text-17 leading-relaxed text-white-70">{summary}</p>
 
-    <dl class="facts">
-      <div><dt>Layer</dt><dd>{LAYER_INFO[layer].name}</dd></div>
-      <div><dt>Context</dt><dd>{context}</dd></div>
-      {team && <div><dt>Team</dt><dd>{team}</dd></div>}
-      <div><dt>Status</dt><dd>{status === 'in-progress' ? 'In progress' : 'Complete'}</dd></div>
-      <div class="wide"><dt>Built with</dt><dd>{stack.join(', ')}</dd></div>
-      {repo && <div class="wide"><dt>Source</dt><dd><a href={repo}>{repo.replace('https://', '')}</a></dd></div>}
-    </dl>
-
-    <div class="prose">
-      <Content />
+    <div class="mt-14 grid gap-10 border-t border-white-10 pt-10 md-cols-250-1 md-gap-16">
+      <aside class="md-sticky md-top-24 md-self-start">
+        <dl class="space-y-4">
+          {
+            facts.map(([k, v]) => (
+              <div class="border-t border-white-10 pt-3">
+                <dt class="font-mono text-10 uppercase tracking-18 text-white-35">{k}</dt>
+                <dd class="mt-1_5 font-mono text-12_5 leading-relaxed text-f2">{v}</dd>
+              </div>
+            ))
+          }
+          <div class="border-t border-white-10 pt-3">
+            <dt class="font-mono text-10 uppercase tracking-18 text-white-35">Built with</dt>
+            <dd class="mt-2_5 flex flex-wrap gap-1_5">
+              {stack.map((s) => <span class="tech">{s}</span>)}
+            </dd>
+          </div>
+        </dl>
+        {
+          repo && (
+            <a
+              href={repo}
+              target="_blank"
+              rel="noreferrer"
+              class="mt-7 inline-flex border border-accent-70 px-4 py-2_5 font-mono text-10 uppercase tracking-16 text-accent transition-colors hover-bg-accent hover-text-0a"
+            >
+              View source code
+            </a>
+          )
+        }
+      </aside>
+      <div class="max-w-38">
+        <div class="prose-tech">
+          <Content />
+        </div>
+      </div>
     </div>
 
-    <nav class="next" aria-label="Next project">
-      <span>Next project</span>
-      <a href={`/projects/${next.id}/`}>{next.data.title}</a>
-    </nav>
-  </article>
+    <a class="group mt-16 flex items-center justify-between gap-6 border-t border-white-10 pt-8" href={`/projects/${next.id}/`}>
+      <span>
+        <span class="label">Next project</span>
+        <span class="mt-2 block font-display text-next font-medium tracking-tight transition-colors group-hover-text-accent">
+          {next.data.title}
+        </span>
+      </span>
+      <Icon name="arrow-right" class="icon-md text-white-40 transition-all group-hover-nudge group-hover-text-ff4f00" />
+    </a>
+  </main>
 </Base>
-
-<style>
-  .project {
-    padding-top: clamp(2rem, 6vw, 4rem);
-  }
-  .back {
-    font-size: var(--step--1);
-    margin-bottom: 2rem;
-  }
-  h1 {
-    font-size: clamp(2.25rem, 1.5rem + 3.5vw, 4rem);
-    max-width: 18ch;
-  }
-  .summary {
-    font-size: var(--step-1);
-    line-height: 1.5;
-    margin-top: 1.25rem;
-    max-width: 54ch;
-  }
-  .facts {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1.25rem 2rem;
-    margin: 2.5rem 0 3rem;
-    padding: 1.5rem 0;
-    border-block: 1px solid var(--rule);
-  }
-  .facts .wide {
-    grid-column: span 2;
-  }
-  .facts dt {
-    color: var(--muted);
-    font-size: var(--step--1);
-  }
-  .facts dd {
-    margin: 0.15rem 0 0;
-    overflow-wrap: anywhere;
-  }
-  .next {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    margin-top: 4rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--rule);
-  }
-  .next span {
-    color: var(--muted);
-    font-size: var(--step--1);
-  }
-  .next a {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: var(--step-2);
-    text-decoration: none;
-  }
-  @media (max-width: 48rem) {
-    .facts {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-</style>
