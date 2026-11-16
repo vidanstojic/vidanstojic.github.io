@@ -428,7 +428,14 @@ function render(doc: PDFDocument, pages: Op[][], sideW: number, k: number, fonts
   }
 }
 
-export async function buildCvPdf(projects: CvProject[], assets: CvAssets): Promise<Uint8Array> {
+/**
+ * Copies the bytes into a buffer of their own. pdf-lib reads the whole underlying
+ * ArrayBuffer, and Node's file buffers can be slices of a larger shared pool.
+ */
+const own = (bytes: Uint8Array | ArrayBuffer) => new Uint8Array(bytes instanceof ArrayBuffer ? bytes.slice(0) : bytes);
+
+export async function buildCvPdf(projects: CvProject[], input: CvAssets): Promise<Uint8Array> {
+  const assets = { regular: own(input.regular), bold: own(input.bold), light: own(input.light), photo: own(input.photo) };
   const doc = await PDFDocument.create();
   doc.registerFontkit(fontkit);
   const fonts: Record<FontKey, PDFFont> = {
