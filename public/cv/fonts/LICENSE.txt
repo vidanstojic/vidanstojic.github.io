@@ -1,0 +1,6 @@
+DejaVu Sans fonts (subset to Latin characters for the CV generator).
+
+Fonts are (c) Bitstream (see below). DejaVu changes are in public domain.
+Bitstream Vera is a trademark of Bitstream, Inc.
+
+Full license: https://dejavu-fonts.github.io/License.html

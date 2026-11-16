@@ -1,7 +1,7 @@
 ---
 /** Lucide arrow icons used across the site. */
 interface Props {
-  name: 'arrow-up-right' | 'arrow-left' | 'arrow-right';
+  name: 'arrow-up-right' | 'arrow-left' | 'arrow-right' | 'arrow-down';
   class?: string;
 }
 const { name, class: className } = Astro.props;
@@ -9,6 +9,7 @@ const paths = {
   'arrow-up-right': ['M7 7h10v10', 'M7 17 17 7'],
   'arrow-left': ['m12 19-7-7 7-7', 'M19 12H5'],
   'arrow-right': ['M5 12h14', 'm12 5 7 7-7 7'],
+  'arrow-down': ['M12 5v14', 'm19 12-7 7-7-7'],
 }[name];
 ---
 

@@ -41,7 +41,11 @@ const facts: [string, string][] = [
 ];
 ---
 
-<Base title={`${pageTitle ? `${pageTitle} · ` : ''}${title} — ${SITE.name}`} description={summary}>
+<Base
+  title={`${pageTitle ? `${pageTitle} · ` : ''}${title} — ${SITE.name}`}
+  description={summary}
+  image={`/og/${project.id}.png`}
+>
   <main class="site-wrap py-12 md-py-20">
     <a
       class="inline-flex items-center gap-2 font-mono text-10 uppercase tracking-16 text-white-45 transition-colors hover-text-accent"

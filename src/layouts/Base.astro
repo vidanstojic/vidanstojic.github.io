@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { SITE, NAV } from '../site';
+import CvDialog from '../components/CvDialog.astro';
 
 // Version the site script by its content so a new deploy is never served from an old cache.
 const scriptVersion = createHash('sha1')
@@ -15,9 +16,28 @@ const scriptVersion = createHash('sha1')
 interface Props {
   title?: string;
   description?: string;
+  /** Link-preview image (Open Graph), a path under the site. */
+  image?: string;
+  /** Keep the page out of search results (404). */
+  noindex?: boolean;
 }
 
-const { title = SITE.title, description = SITE.description } = Astro.props;
+const { title = SITE.title, description = SITE.description, image = '/og/site.png', noindex = false } = Astro.props;
+const ogImage = new URL(image, Astro.site);
+// Tells search engines who the site belongs to and which profiles are the same person.
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.name,
+  url: Astro.site?.href,
+  image: new URL('/images/vidan-stojic.jpg', Astro.site).href,
+  jobTitle: SITE.role,
+  email: `mailto:${SITE.email}`,
+  address: { '@type': 'PostalAddress', addressLocality: 'Belgrade', addressCountry: 'RS' },
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Union University, School of Computing (RAF)' },
+  knowsAbout: ['Android', 'Kotlin', 'Jetpack Compose', 'Spring Boot', 'Compilers', 'Operating systems'],
+  sameAs: [SITE.github, SITE.linkedin],
+};
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const path = Astro.url.pathname;
 const isContact = path.startsWith('/contact');
@@ -36,14 +56,28 @@ const MOBILE_NAV = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {!noindex && <link rel="canonical" href={canonical} />}
+    {noindex && <meta name="robots" content="noindex" />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-48.png" type="image/png" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="theme-color" content="#0a0a0a" />
+    <meta name="author" content={SITE.name} />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
     <script is:inline>
       // Scroll animations hide content until JS reveals it. If the script ever fails
       // to load, drop the flag after 2.5 s so the page is still fully readable.
@@ -121,7 +155,7 @@ const MOBILE_NAV = [
 
       <footer class="border-t border-white-10 bg-05 py-10">
         <div class="site-wrap flex flex-col gap-5 sm-flex-row sm-items-center sm-justify-between">
-          <p class="font-mono text-11 uppercase tracking-16 text-white-40">
+          <p class="font-mono text-11 uppercase tracking-16 text-white-55">
             © {new Date().getFullYear()} {SITE.name} · {SITE.location}
           </p>
           <div class="flex flex-wrap items-center gap-5 font-mono text-11 uppercase tracking-14">
@@ -133,6 +167,7 @@ const MOBILE_NAV = [
       </footer>
     </div>
 
+    <CvDialog />
     <div class="toast" role="status" aria-live="polite" data-toast></div>
     <div class="scroll-progress" aria-hidden="true" data-progress transition:persist></div>
 

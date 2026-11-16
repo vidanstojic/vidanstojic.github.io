@@ -1,6 +1,8 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
+import sitemap from '@astrojs/sitemap';
+
 // Custom domain: `site` is the domain, no `base`.
 //
 // GitHub Pages lets browsers cache HTML for up to 10 minutes and removes the
@@ -11,9 +13,11 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://vidanstojic.me',
   trailingSlash: 'ignore',
+
   build: {
     inlineStylesheets: 'always',
   },
+
   vite: {
     build: {
       rollupOptions: {
@@ -25,4 +29,6 @@ export default defineConfig({
       },
     },
   },
+
+  integrations: [sitemap({ filter: (page) => !page.includes('/404') })],
 });

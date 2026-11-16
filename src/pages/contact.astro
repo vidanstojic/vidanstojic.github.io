@@ -47,8 +47,13 @@ const topics = ['Job offer', 'Collaboration', 'Private lessons', 'Other'];
           <input class="hp" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" />
           <div class="mt-6 flex flex-wrap items-center gap-4">
             <button class="btn btn-solid" type="submit"><span class="btn-label">Send message</span></button>
-            <p class="text-12_5 text-white-40">Replies go to the email you enter above.</p>
+            <p class="text-12_5 text-white-55">Replies go to the email you enter above.</p>
           </div>
+          <p class="form-privacy mt-5 max-w-xl text-12_5 leading-relaxed text-white-55">
+            Your name, email and message are sent through
+            <a href="https://web3forms.com/privacy" target="_blank" rel="noreferrer">Web3Forms</a>
+            to my inbox and are only used to reply to you. Nothing is stored on this site.
+          </p>
         </form>
 
         <div class="success-box" data-form-success hidden>
@@ -83,21 +88,11 @@ const topics = ['Job offer', 'Collaboration', 'Private lessons', 'Other'];
           <span class="font-mono text-13 text-f2">{SITE.githubHandle}</span>
           <span class="contact-action">Browse code <Icon name="arrow-up-right" class="icon-sm" /></span>
         </a>
-        {
-          SITE.cv ? (
-            <a class="contact-card" href={SITE.cv} download>
-              <span class="font-mono text-10 uppercase tracking-18 text-white-40">CV</span>
-              <span class="font-mono text-13 text-f2">PDF, one page</span>
-              <span class="contact-action">Download CV</span>
-            </a>
-          ) : (
-            <a class="contact-card" href={`mailto:${SITE.email}?subject=CV%20request`}>
-              <span class="font-mono text-10 uppercase tracking-18 text-white-40">CV</span>
-              <span class="font-mono text-13 text-f2">PDF on request</span>
-              <span class="contact-action">Ask by email</span>
-            </a>
-          )
-        }
+        <button class="contact-card" type="button" data-cv-open>
+          <span class="font-mono text-10 uppercase tracking-18 text-white-40">CV</span>
+          <span class="font-mono text-13 text-f2">PDF, A4</span>
+          <span class="contact-action">Download or build your own</span>
+        </button>
         <p class="pt-3 font-mono text-11 uppercase tracking-14 text-white-40">{SITE.location}</p>
       </aside>
     </div>
@@ -171,5 +166,11 @@ const topics = ['Job offer', 'Collaboration', 'Private lessons', 'Other'];
   }
   :global(.contact-card.is-copied .contact-action) {
     color: #3ddc84;
+  }
+  /* Phones: labels at least 12px */
+  @media (max-width: 767px) {
+    .contact-action {
+      font-size: 12px;
+    }
   }
 </style>
