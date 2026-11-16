@@ -28,7 +28,7 @@ export const CV_PERSON = {
     { title: 'Fourth Gymnasium in Belgrade', lines: ['2018 - 2022'] },
     {
       title: 'Union University Faculty of Computer Science, Belgrade',
-      lines: ['Computer Science', '2022 -', 'Senior undergraduate'],
+      lines: ['Computer Science', '2022 - present', 'Senior undergraduate,', 'one exam left before graduation'],
     },
   ],
   skills: [

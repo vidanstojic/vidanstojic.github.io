@@ -65,4 +65,32 @@ const subpages = defineCollection({
   }),
 });
 
-export const collections = { projects, subpages };
+/**
+ * Serbian translations. Only the text is translated; everything else (layer,
+ * stack, links, images, order) comes from the English file with the same id.
+ * src/content/projects-sr/<id>.md and src/content/subpages-sr/<project>/<page>.md
+ */
+const projectsSr = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/projects-sr' }),
+  schema: z.object({
+    title: z.string().optional(),
+    summary: z.string(),
+    context: z.string(),
+    team: z.string().optional(),
+    /** Same order as the English gallery. */
+    gallery: z.array(z.object({ alt: z.string(), caption: z.string().optional() })).default([]),
+    /** Labels for the extra repository links, same order as in English. */
+    repoLabels: z.array(z.string()).default([]),
+  }),
+});
+
+const subpagesSr = defineCollection({
+  loader: glob({ pattern: '*/*.md', base: './src/content/subpages-sr' }),
+  schema: z.object({
+    title: z.string(),
+    tab: z.string(),
+    summary: z.string(),
+  }),
+});
+
+export const collections = { projects, subpages, projectsSr, subpagesSr };

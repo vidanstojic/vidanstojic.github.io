@@ -1,0 +1,155 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import TechIcon from '../components/TechIcon.astro';
+import Icon from '../components/Icon.astro';
+import type { ImageMetadata } from 'astro';
+import { SITE } from '../site';
+import { langFromPath, localize, t } from '../i18n';
+
+// Profile photo: drop the file in src/assets/ and set SITE.photo to its name.
+const photos = import.meta.glob<{ default: ImageMetadata }>('../assets/profile.*', { eager: true });
+const photo = SITE.photo ? photos[`../assets/${SITE.photo}`]?.default : undefined;
+
+const lang = langFromPath(Astro.url.pathname);
+const T = t(lang);
+const A = T.about;
+const principles = A.principles;
+/* Newest first. Only dates that are confirmed; more entries can be added here. */
+const timeline = A.timeline;
+const stack = [
+  { group: 'Android', items: ['Android', 'Jetpack Compose', 'Room', 'Hilt', 'WorkManager', 'Coroutines'] },
+  { group: 'Backend', items: ['Spring Boot', 'Ktor', 'PostgreSQL', 'RabbitMQ', 'Docker', 'WebSocket'] },
+  { group: 'Systems', items: ['C', 'xv6', 'Linux', 'ANTLR', 'Git', 'Gradle'] },
+  { group: 'Languages', items: ['Kotlin', 'Java', 'C++', 'C#', 'Python', 'TypeScript'] },
+];
+---
+
+<Base title={A.title} description={A.description}>
+  <main>
+    <section class="site-wrap pt-20 pb-14 md-pt-24">
+      <div class="about-hero" data-reveal>
+        <div class="avatar">
+          {
+            photo ? (
+              <Image src={photo} alt={A.portrait} width={400} height={400} densities={[1, 2]} loading="eager" />
+            ) : (
+              <div class="mono-mark" aria-label={`${SITE.name} monogram`}>
+                V<span>S</span>
+              </div>
+            )
+          }
+        </div>
+        <div>
+          <span class="pill"><span class="hs7-dot" aria-hidden="true"></span>{T.availability}</span>
+          <h1 class="mt-5 max-w-3xl font-display text-h1 font-medium leading-105 tracking-tight">
+            {A.hi}
+          </h1>
+          <p class="mt-5 max-w-2xl text-17 leading-relaxed text-white-70">{A.lead}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-white-10 bg-08 py-20">
+      <div class="site-wrap grid gap-12 md-cols-075-125 md-gap-16">
+        <h2 class="sec-title" data-reveal>{A.storyTitle}</h2>
+        <div data-stagger>
+          {A.story.map((para) => <p class="mb-5 text-16_5 leading-175 text-white-75">{para}</p>)}
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-white-10 py-20">
+      <div class="site-wrap">
+        <h2 class="sec-title" data-reveal>{A.principlesTitle}</h2>
+        <div class="mt-10 grid gap-10 sm-grid-cols-2" data-stagger>
+          {
+            principles.map((p, i) => (
+              <div class="principle">
+                <p class="num">0{i + 1}</p>
+                <h3 class="mt-3 font-display text-17 font-medium text-f2">{p.title}</h3>
+                <p class="mt-3 text-15 leading-relaxed text-white-60">{p.text}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-white-10 bg-08 py-20">
+      <div class="site-wrap grid gap-12 md-cols-075-125 md-gap-16">
+        <div data-reveal>
+          <h2 class="sec-title">{A.pathTitle}</h2>
+          <p class="mt-4 text-15 leading-relaxed text-white-55">{A.pathText}</p>
+        </div>
+        <ol class="timeline" data-stagger>
+          {
+            timeline.map((t) => (
+              <li class:list={['tl-item', { 'is-now': t.now }]}>
+                <span class="tl-when">{t.when}</span>
+                <div class="tl-body">
+                  <p class="tl-kind">{t.kind}</p>
+                  <h3 class="mt-1_5 font-display text-17 font-medium text-f2">{t.title}</h3>
+                  <p class="mt-1_5 text-15 leading-relaxed text-white-60">{t.text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section class="border-t border-white-10 py-20">
+      <div class="site-wrap">
+        <div class="flex flex-wrap items-end justify-between gap-4" data-reveal>
+          <h2 class="sec-title">{A.stackTitle}</h2>
+          <p class="text-15 text-white-55">{A.stackText}</p>
+        </div>
+        <div class="mt-10 grid gap-4 sm-grid-cols-2" data-stagger>
+          {
+            stack.map((g) => (
+              <div class="tech-group">
+                <h3 class="font-mono text-10 uppercase tracking-18 text-accent">{A.groups[g.group as keyof typeof A.groups]}</h3>
+                <ul class="tech-list">
+                  {g.items.map((it) => (
+                    <TechIcon name={it} />
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-white-10 bg-05 py-20">
+      <div class="site-wrap">
+        <div class="cta-band grid gap-6 md-cols-1-1 md-items-end" data-reveal>
+          <div>
+            <h2 class="sec-title">{A.ctaTitle}</h2>
+            <p class="mt-4 text-15 leading-relaxed text-white-70">{A.ctaText}</p>
+          </div>
+          <div class="flex flex-wrap gap-3 md-justify-end">
+            <a class="btn btn-solid" href={localize('/contact/', lang)}>{A.contactMe} <Icon name="arrow-right" class="icon-sm" /></a>
+            <a class="btn btn-ghost" href={localize('/projects/', lang)}>{A.seeWork}</a>
+            <button class="btn btn-ghost" type="button" data-cv-open>{A.downloadCv}</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .about-hero {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+  @media (min-width: 720px) {
+    .about-hero {
+      grid-template-columns: auto 1fr;
+      gap: 3rem;
+    }
+  }
+</style>

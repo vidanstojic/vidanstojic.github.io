@@ -13,12 +13,27 @@ const $ = <T extends Element>(sel: string, root: ParentNode = document) => root.
 const $$ = <T extends Element>(sel: string, root: ParentNode = document) => [...root.querySelectorAll<T>(sel)];
 const dialog = () => $<HTMLDialogElement>('[data-cv-dialog]');
 
+interface Texts {
+  heading: string;
+  buildHeading: string;
+  none: string;
+  count: string[];
+  more: string;
+  fewer: string;
+  building: string;
+  done: string;
+  failed: string;
+  download: string;
+}
+/** Interface text for the current page's language, rendered into the dialog. */
+const text = (): Texts => JSON.parse($('[data-cv-text]', dialog() ?? document)?.textContent ?? '{}');
+
 function showView(name: 'choose' | 'build') {
   const d = dialog();
   if (!d) return;
   $$<HTMLElement>('[data-cv-view]', d).forEach((v) => (v.hidden = v.dataset.cvView !== name));
   $<HTMLElement>('[data-cv-back]', d)!.hidden = name === 'choose';
-  $<HTMLElement>('[data-cv-heading]', d)!.textContent = name === 'choose' ? 'Download my CV' : 'Build your CV';
+  $<HTMLElement>('[data-cv-heading]', d)!.textContent = name === 'choose' ? text().heading : text().buildHeading;
   d.dataset.view = name;
   if (name === 'build' && matchMedia('(hover: hover)').matches) $<HTMLInputElement>('[data-cv-search]', d)?.focus();
 }
@@ -68,9 +83,10 @@ function sync() {
     li.classList.toggle('is-picked', n >= 0);
   });
   const count = picked.length;
+  const T = text();
   $<HTMLElement>('[data-cv-count]', d)!.textContent = count
-    ? `${count} project${count === 1 ? '' : 's'} · in the order you picked them`
-    : 'Pick at least one project';
+    ? T.count[Math.min(count, T.count.length) - 1].replace('{n}', String(count))
+    : T.none;
   $<HTMLButtonElement>('[data-cv-generate]', d)!.disabled = count === 0;
   $$<HTMLButtonElement>('[data-cv-layer]', d).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.cvLayer === layer)));
   $$<HTMLButtonElement>('[data-cv-tag]', d).forEach((b) => b.setAttribute('aria-pressed', String(tags.has(b.dataset.cvTag!))));
@@ -97,7 +113,8 @@ async function generate(button: HTMLButtonElement) {
   const label = $<HTMLElement>('.btn-label', button)!;
   button.disabled = true;
   button.dataset.state = 'sending';
-  label.textContent = 'Building PDF';
+  const T = text();
+  label.textContent = T.building;
   try {
     const [{ buildCvPdf }, { CV_PROJECTS }, files] = await Promise.all([
       import('../lib/cv/pdf'),
@@ -114,11 +131,11 @@ async function generate(button: HTMLButtonElement) {
     a.click();
     a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 60_000);
-    label.textContent = 'Downloaded';
-    setTimeout(() => (label.textContent = 'Download PDF'), 2200);
+    label.textContent = T.done;
+    setTimeout(() => (label.textContent = T.download), 2200);
   } catch (err) {
     console.error(err);
-    label.textContent = 'Reload and try again';
+    label.textContent = T.failed;
   } finally {
     delete button.dataset.state;
     button.disabled = picked.length === 0;
@@ -158,7 +175,7 @@ function onClick(e: MouseEvent) {
     const box = more.parentElement!;
     const expanded = box.classList.toggle('is-expanded');
     more.setAttribute('aria-expanded', String(expanded));
-    more.textContent = expanded ? 'Show fewer' : `+${$$('[data-cv-tag]', box).length - 12} more`;
+    more.textContent = expanded ? text().fewer : text().more.replace('{n}', String($$('[data-cv-tag]', box).length - 12));
     return;
   }
   if (t.closest('[data-cv-clear]')) {

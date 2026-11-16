@@ -30,5 +30,10 @@ export default defineConfig({
     },
   },
 
-  integrations: [sitemap({ filter: (page) => !page.includes('/404') })],
+  integrations: [
+    sitemap({
+      filter: (page) => !page.includes('/404'),
+      i18n: { defaultLocale: 'en', locales: { en: 'en', sr: 'sr-Latn' } },
+    }),
+  ],
 });

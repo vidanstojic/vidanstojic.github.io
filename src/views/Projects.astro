@@ -1,0 +1,58 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { LAYERS } from '../content.config';
+import { LAYER_INFO } from '../site';
+import { getProjects } from '../lib/projects';
+import { langFromPath, t } from '../i18n';
+
+const lang = langFromPath(Astro.url.pathname);
+const T = t(lang);
+const projects = await getProjects(lang);
+const topDown = [...LAYERS].reverse();
+---
+
+<Base title={T.projects.title} description={T.projects.description}>
+  <main>
+    <section class="site-wrap pt-20 pb-14 md-pt-24">
+      <div data-reveal>
+        <span class="tag-accent">{T.projects.count(projects.length)}</span>
+        <h1 class="mt-5 max-w-3xl font-display text-h1 font-medium leading-105 tracking-tight">{T.projects.heading}</h1>
+        <p class="mt-5 max-w-2xl text-17 leading-relaxed text-white-70">{T.projects.text}</p>
+      </div>
+      <nav class="tabs mt-10" aria-label={T.projects.jump}>
+        {topDown.map((l) => <a href={`#${l}`}>{LAYER_INFO[l].addr} {T.layers[l].name}</a>)}
+      </nav>
+    </section>
+
+    {
+      topDown.map((layer) => (
+        <section
+          id={layer}
+          class="anchor border-t border-white-10 py-20"
+          style={`background-color:${LAYER_INFO[layer].bg}`}
+          aria-labelledby={`h-${layer}`}
+        >
+          <div class="site-wrap">
+            <div class="flex flex-wrap items-baseline justify-between gap-4" data-reveal>
+              <div class="border-l-2 pl-4" style="border-color:#ff4f00">
+                <p class="font-mono text-10 uppercase tracking-20 text-white-35">{LAYER_INFO[layer].addr}</p>
+                <h2 id={`h-${layer}`} class="mt-1_5 font-display text-15 uppercase tracking-12 text-f2">
+                  {T.layers[layer].name}
+                </h2>
+              </div>
+              <p class="text-15 text-white-55">{T.layers[layer].blurb}</p>
+            </div>
+            <div class="grid-cards cols-3 mt-10" data-stagger>
+              {projects
+                .filter((p) => p.data.layer === layer)
+                .map((p) => (
+                  <ProjectCard project={p} maxTags={3} />
+                ))}
+            </div>
+          </div>
+        </section>
+      ))
+    }
+  </main>
+</Base>

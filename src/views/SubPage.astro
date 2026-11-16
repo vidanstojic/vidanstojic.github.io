@@ -1,0 +1,23 @@
+---
+import { render } from 'astro:content';
+import ProjectShell from '../layouts/ProjectShell.astro';
+import type { Project, Subpage } from '../lib/projects';
+import { HTML_LANG } from '../i18n';
+
+interface Props {
+  project: Project;
+  sub: Subpage;
+}
+const { project, sub } = Astro.props;
+const { Content } = await render(sub.entry);
+---
+
+<ProjectShell project={project} current={sub.id} pageTitle={sub.data.tab} untranslated={!sub.translated}>
+  <div class="max-w-38" lang={sub.translated ? undefined : HTML_LANG.en}>
+    <h2 class="font-display text-h3 font-medium leading-tight tracking-tight" data-reveal>{sub.data.title}</h2>
+    <p class="mt-3 text-15 leading-relaxed text-white-55" data-reveal>{sub.data.summary}</p>
+    <div class="prose-tech mt-6" data-reveal>
+      <Content />
+    </div>
+  </div>
+</ProjectShell>

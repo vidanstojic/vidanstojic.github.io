@@ -3,41 +3,43 @@
  * Shared frame for a project's overview page and its sub-pages:
  * header, links, tab navigation, facts sidebar, body slot, next project.
  */
-import type { CollectionEntry } from 'astro:content';
-import { getCollection } from 'astro:content';
 import Base from './Base.astro';
 import Icon from '../components/Icon.astro';
 import { SITE, LAYER_INFO } from '../site';
-import { STATUS_LABEL } from '../content.config';
+import { getProjects, getSubpages, type Project } from '../lib/projects';
+import { langFromPath, localize, t } from '../i18n';
 
 interface Props {
-  project: CollectionEntry<'projects'>;
+  project: Project;
   /** Id of the current sub-page, or undefined for the overview. */
   current?: string;
   pageTitle?: string;
+  /** Serbian page whose body is still in English. */
+  untranslated?: boolean;
 }
 
-const { project, current, pageTitle } = Astro.props;
+const { project, current, pageTitle, untranslated = false } = Astro.props;
 const { title, summary, layer, stack, team, context, status, repo, repos, playStore, demo } = project.data;
 
-const all = (await getCollection('projects')).sort(
+const lang = langFromPath(Astro.url.pathname);
+const T = t(lang);
+const P = T.project;
+const all = (await getProjects(lang)).sort(
   (a, b) => Number(b.data.featured) - Number(a.data.featured) || a.data.order - b.data.order,
 );
 const next = all[(all.findIndex((p) => p.id === project.id) + 1) % all.length];
 
-const subs = (await getCollection('subpages', (s) => s.id.startsWith(`${project.id}/`))).sort(
-  (a, b) => a.data.order - b.data.order,
-);
+const subs = await getSubpages(lang, project.id);
 const tabs = [
-  { href: `/projects/${project.id}/`, label: 'Overview', id: undefined as string | undefined },
-  ...subs.map((s) => ({ href: `/projects/${s.id}/`, label: s.data.tab, id: s.id })),
+  { href: localize(`/projects/${project.id}/`, lang), label: P.overview, id: undefined as string | undefined },
+  ...subs.map((s) => ({ href: localize(`/projects/${s.id}/`, lang), label: s.data.tab, id: s.id })),
 ];
 
 const facts: [string, string][] = [
-  ['Layer', `${LAYER_INFO[layer].name} (${LAYER_INFO[layer].addr})`],
-  ['Context', context],
-  ...(team ? ([['Team', team]] as [string, string][]) : []),
-  ['Status', STATUS_LABEL[status]],
+  [P.facts.layer, `${T.layers[layer].name} (${LAYER_INFO[layer].addr})`],
+  [P.facts.context, context],
+  ...(team ? ([[P.facts.team, team]] as [string, string][]) : []),
+  [P.facts.status, T.status[status]],
 ];
 ---
 
@@ -49,15 +51,15 @@ const facts: [string, string][] = [
   <main class="site-wrap py-12 md-py-20">
     <a
       class="inline-flex items-center gap-2 font-mono text-10 uppercase tracking-16 text-white-45 transition-colors hover-text-accent"
-      href="/projects/"
+      href={localize('/projects/', lang)}
     >
-      <Icon name="arrow-left" class="icon-sm" />All projects
+      <Icon name="arrow-left" class="icon-sm" />{P.allProjects}
     </a>
 
     <div data-reveal>
       <div class="mt-9 flex flex-wrap items-center gap-3">
-        <span class="tag-accent">{LAYER_INFO[layer].name} layer</span>
-        <span class="status" data-status={status}>{STATUS_LABEL[status]}</span>
+        <span class="tag-accent">{P.layer(T.layers[layer].name)}</span>
+        <span class="status" data-status={status}>{T.status[status]}</span>
       </div>
       <h1
         class="mt-5 max-w-3xl font-display text-h1 font-medium leading-105 tracking-tight"
@@ -66,14 +68,14 @@ const facts: [string, string][] = [
         {title}
       </h1>
       <p class="mt-5 max-w-2xl text-17 leading-relaxed text-white-70">{summary}</p>
-      <ul class="mt-6 flex flex-wrap gap-1_5" aria-label="Technologies">
+      <ul class="mt-6 flex flex-wrap gap-1_5" aria-label={T.card.technologies}>
         {stack.map((s) => <li class="tech">{s}</li>)}
       </ul>
       <div class="mt-7 flex flex-wrap items-center gap-3">
         {
           repo && (
             <a class="btn btn-line" href={repo} target="_blank" rel="noreferrer">
-              Source on GitHub <Icon name="arrow-up-right" class="icon-sm" />
+              {P.source} <Icon name="arrow-up-right" class="icon-sm" />
             </a>
           )
         }
@@ -87,14 +89,14 @@ const facts: [string, string][] = [
         {
           playStore && (
             <a class="btn btn-solid" href={playStore} target="_blank" rel="noreferrer">
-              Google Play <Icon name="arrow-up-right" class="icon-sm" />
+              {P.play} <Icon name="arrow-up-right" class="icon-sm" />
             </a>
           )
         }
         {
           demo && (
             <a class="btn btn-solid" href={demo} target="_blank" rel="noreferrer">
-              Live demo <Icon name="arrow-up-right" class="icon-sm" />
+              {P.demo} <Icon name="arrow-up-right" class="icon-sm" />
             </a>
           )
         }
@@ -103,7 +105,7 @@ const facts: [string, string][] = [
 
     {
       tabs.length > 1 && (
-        <nav class="tabs mt-14" aria-label={`${title} pages`}>
+        <nav class="tabs mt-14" aria-label={P.pages(title)}>
           {tabs.map((t) => (
             <a href={t.href} aria-current={t.id === current ? 'page' : undefined}>
               {t.label}
@@ -132,13 +134,14 @@ const facts: [string, string][] = [
         </dl>
       </aside>
       <div class="min-w-0">
+        {untranslated && P.untranslated && <p class="untranslated" lang="sr-Latn">{P.untranslated}</p>}
         <slot />
       </div>
     </div>
 
-    <a class="group mt-16 flex items-center justify-between gap-6 border-t border-white-10 pt-8" href={`/projects/${next.id}/`}>
+    <a class="group mt-16 flex items-center justify-between gap-6 border-t border-white-10 pt-8" href={localize(`/projects/${next.id}/`, lang)}>
       <span>
-        <span class="label">Next project</span>
+        <span class="label">{P.next}</span>
         <span class="mt-2 block font-display text-next font-medium tracking-tight transition-colors group-hover-text-accent">
           {next.data.title}
         </span>

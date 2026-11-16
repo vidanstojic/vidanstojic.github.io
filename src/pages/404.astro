@@ -1,18 +1,35 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
+import { UI } from '../i18n';
+
+// GitHub Pages serves this one file for every missing address, English or
+// Serbian, so both texts are in the page and the script picks one by the URL.
+const en = UI.en.notFound;
+const sr = UI.sr.notFound;
 ---
 
-<Base title="Page not found — Vidan Stojić" noindex>
+<Base title={en.title} noindex>
   <main class="site-wrap py-20">
     <span class="tag-accent">404</span>
-    <h1 class="mt-5 max-w-3xl font-display text-h1 font-medium leading-105 tracking-tight">This page doesn't exist.</h1>
-    <p class="mt-5 max-w-2xl text-17 leading-relaxed text-white-70">The link may be old or mistyped.</p>
+    <h1 class="mt-5 max-w-3xl font-display text-h1 font-medium leading-105 tracking-tight" data-nf="heading" data-sr={sr.heading}>
+      {en.heading}
+    </h1>
+    <p class="mt-5 max-w-2xl text-17 leading-relaxed text-white-70" data-nf="text" data-sr={sr.text}>{en.text}</p>
     <a
       class="mt-9 inline-flex items-center gap-2 font-mono text-10 uppercase tracking-16 text-accent transition-colors hover-text-f2"
-      href="/#work"
+      href="/projects/"
+      data-nf-link
     >
-      <Icon name="arrow-left" class="icon-sm" />Back to all projects
+      <Icon name="arrow-left" class="icon-sm" /><span data-nf="back" data-sr={sr.back}>{en.back}</span>
     </a>
   </main>
+  <script is:inline define:vars={{ srTitle: sr.title }}>
+    if (/^\/sr(\/|$)/.test(location.pathname)) {
+      document.documentElement.lang = 'sr-Latn';
+      document.title = srTitle;
+      document.querySelectorAll('[data-nf]').forEach((el) => (el.textContent = el.dataset.sr));
+      document.querySelector('[data-nf-link]').setAttribute('href', '/sr/projects/');
+    }
+  </script>
 </Base>

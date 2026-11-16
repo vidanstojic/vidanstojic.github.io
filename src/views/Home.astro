@@ -1,0 +1,95 @@
+---
+import Base from '../layouts/Base.astro';
+import LayerBands from '../components/LayerBands.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Icon from '../components/Icon.astro';
+import { getProjects } from '../lib/projects';
+import { langFromPath, localize, t } from '../i18n';
+
+const lang = langFromPath(Astro.url.pathname);
+const T = t(lang);
+const projects = await getProjects(lang);
+const featured = projects.filter((p) => p.data.featured);
+
+const headline = T.home.headline;
+const words = headline.split(' ');
+---
+
+<Base>
+  <main>
+    <section class="hs7-section" aria-label={T.home.introLabel}>
+      <div class="hs7-bg" aria-hidden="true">
+        <img
+          src="/images/hero-strata.webp"
+          srcset="/images/hero-strata-640.webp 640w, /images/hero-strata.webp 1280w"
+          sizes="100vw"
+          alt=""
+          width="1280"
+          height="720"
+          fetchpriority="high"
+        />
+      </div>
+      <div class="hs7-content">
+        <p class="hs7-eyebrow"><span class="hs7-dot" aria-hidden="true"></span>{T.openRoles}</p>
+        <h1 class="hs7-title" aria-label={headline}>
+          {
+            words.map((w, i) => (
+              <span aria-hidden="true">
+                <span class="hs7-word">
+                  {[...w].map((ch) => (
+                    <span class="hs7-ltr">{ch}</span>
+                  ))}
+                </span>
+                {i < words.length - 1 ? ' ' : ''}
+              </span>
+            ))
+          }
+        </h1>
+        <p class="hs7-body">{T.home.intro}</p>
+        <a class="hs7-cta" href="#work">{T.home.cta}</a>
+      </div>
+    </section>
+
+    <section id="work" class="anchor border-t border-white-10">
+      <div class="site-wrap pb-14 pt-20 md-pt-24">
+        <div class="grid gap-5 md-cols-1-1 md-items-end" data-reveal>
+          <h2 class="sec-title">{T.home.workTitle}</h2>
+          <p class="text-15 leading-relaxed text-white-55 md-text-right">{T.home.workText}</p>
+        </div>
+      </div>
+      <LayerBands projects={projects} />
+    </section>
+
+    <section class="anchor border-t border-white-10 bg-0a py-20">
+      <div class="site-wrap">
+        <div class="flex flex-wrap items-end justify-between gap-4" data-reveal>
+          <h2 class="sec-title">{T.home.selected}</h2>
+          <a class="link-line font-mono text-11 uppercase tracking-14 text-white-60 hover-text-f2" href={localize('/projects/', lang)}>
+            {T.home.all(projects.length)}
+          </a>
+        </div>
+        <div class="grid-cards mt-10" data-stagger>
+          {featured.map((p) => <ProjectCard project={p} />)}
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-white-10 bg-08 py-20">
+      <div class="site-wrap">
+        <div class="cta-band grid gap-6 md-cols-1-1 md-items-end" data-reveal>
+          <div>
+            <p class="hs7-eyebrow" style="animation:none;margin-bottom:1rem">
+              <span class="hs7-dot" aria-hidden="true"></span>{T.openRoles}
+            </p>
+            <h2 class="sec-title">{T.home.ctaTitle}</h2>
+            <p class="mt-4 text-15 leading-relaxed text-white-70">{T.home.ctaText}</p>
+          </div>
+          <div class="flex flex-wrap gap-3 md-justify-end">
+            <a class="btn btn-solid" href={localize('/contact/', lang)}>{T.home.getInTouch} <Icon name="arrow-right" class="icon-sm" /></a>
+            <a class="btn btn-ghost" href={localize('/about/', lang)}>{T.home.moreAbout}</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>

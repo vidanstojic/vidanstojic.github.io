@@ -1,33 +1,35 @@
 ---
-import type { CollectionEntry } from 'astro:content';
 import { LAYER_INFO } from '../site';
-import { STATUS_LABEL } from '../content.config';
+import { langFromPath, localize, t } from '../i18n';
+import type { Project } from '../lib/projects';
 import Icon from './Icon.astro';
 
 interface Props {
-  project: CollectionEntry<'projects'>;
+  project: Project;
   /** Max technologies shown on the card. */
   maxTags?: number;
 }
 const { project, maxTags = 4 } = Astro.props;
 const { title, summary, layer, stack, context, status } = project.data;
+const lang = langFromPath(Astro.url.pathname);
+const T = t(lang);
 ---
 
-<a class="card" href={`/projects/${project.id}/`} data-spotlight>
+<a class="card" href={localize(`/projects/${project.id}/`, lang)} data-spotlight>
   <div class="flex flex-wrap items-center justify-between gap-3">
     <span class="font-mono text-10 uppercase tracking-20 text-white-35">
-      {LAYER_INFO[layer].addr} · {LAYER_INFO[layer].name}
+      {LAYER_INFO[layer].addr} · {T.layers[layer].name}
     </span>
-    <span class="status" data-status={status}>{STATUS_LABEL[status]}</span>
+    <span class="status" data-status={status}>{T.status[status]}</span>
   </div>
   <h3 class="card-title mt-5" transition:name={`title-${project.id}`}>{title}</h3>
   <p class="mt-2 font-mono text-11 text-white-40">{context}</p>
   <p class="mt-4 text-15 leading-relaxed text-white-70">{summary}</p>
-  <ul class="mt-5 flex flex-wrap gap-1_5" aria-label="Technologies">
+  <ul class="mt-5 flex flex-wrap gap-1_5" aria-label={T.card.technologies}>
     {stack.slice(0, maxTags).map((s) => <li class="tech">{s}</li>)}
     {stack.length > maxTags && <li class="tech">+{stack.length - maxTags}</li>}
   </ul>
   <span class="card-go font-mono text-11 uppercase tracking-14 text-accent">
-    Read the case study <Icon name="arrow-right" class="icon-sm" />
+    {T.card.readCase} <Icon name="arrow-right" class="icon-sm" />
   </span>
 </a>

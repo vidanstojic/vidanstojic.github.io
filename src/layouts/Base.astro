@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { SITE, NAV } from '../site';
 import CvDialog from '../components/CvDialog.astro';
+import { HTML_LANG, OG_LOCALE, langFromPath, localize, t, type Lang } from '../i18n';
 
 // Version the site script by its content so a new deploy is never served from an old cache.
 const scriptVersion = createHash('sha1')
@@ -22,7 +23,15 @@ interface Props {
   noindex?: boolean;
 }
 
-const { title = SITE.title, description = SITE.description, image = '/og/site.png', noindex = false } = Astro.props;
+const lang = langFromPath(Astro.url.pathname);
+const T = t(lang);
+const other: Lang = lang === 'en' ? 'sr' : 'en';
+const { title = T.siteTitle, description = T.siteDescription, image = '/og/site.png', noindex = false } = Astro.props;
+const alternates = {
+  en: new URL(localize(Astro.url.pathname, 'en'), Astro.site),
+  sr: new URL(localize(Astro.url.pathname, 'sr'), Astro.site),
+};
+const otherPath = localize(Astro.url.pathname, other);
 const ogImage = new URL(image, Astro.site);
 // Tells search engines who the site belongs to and which profiles are the same person.
 const person = {
@@ -40,17 +49,22 @@ const person = {
 };
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const path = Astro.url.pathname;
-const isContact = path.startsWith('/contact');
+const isContact = path.startsWith(localize('/contact', lang));
 const MOBILE_NAV = [
-  { href: '/', label: 'Home', match: '/', exact: true },
-  { href: '/projects/', label: 'Projects', match: '/projects', exact: false },
-  { href: '/about/', label: 'About', match: '/about', exact: false },
-  { href: '/contact/', label: 'Contact', match: '/contact', exact: false },
+  { href: localize('/', lang), label: T.nav.home, match: localize('/', lang), exact: true },
+  { href: localize('/projects/', lang), label: T.nav.projects, match: localize('/projects', lang), exact: false },
+  { href: localize('/about/', lang), label: T.nav.about, match: localize('/about', lang), exact: false },
+  { href: localize('/contact/', lang), label: T.nav.contact, match: localize('/contact', lang), exact: false },
 ];
+const MAIN_NAV = NAV.map((n) => ({
+  href: localize(n.href, lang),
+  match: localize(n.match, lang),
+  label: n.match === '/projects' ? T.nav.work : T.nav.about,
+}));
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={HTML_LANG[lang]}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -58,8 +72,18 @@ const MOBILE_NAV = [
     <meta name="description" content={description} />
     {!noindex && <link rel="canonical" href={canonical} />}
     {noindex && <meta name="robots" content="noindex" />}
+    {
+      !noindex && (
+        <>
+          <link rel="alternate" hreflang="en" href={alternates.en} />
+          <link rel="alternate" hreflang="sr" href={alternates.sr} />
+          <link rel="alternate" hreflang="x-default" href={alternates.en} />
+        </>
+      )
+    }
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="/favicon-48.png" type="image/png" sizes="48x48" />
+    <link rel="icon" href="/favicon-96.png" type="image/png" sizes="96x96" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" href="/sitemap-index.xml" />
@@ -67,7 +91,8 @@ const MOBILE_NAV = [
     <meta name="author" content={SITE.name} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE.name} />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale" content={OG_LOCALE[lang]} />
+    <meta property="og:locale:alternate" content={OG_LOCALE[other]} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -90,15 +115,16 @@ const MOBILE_NAV = [
   </head>
   <body>
     <div class="min-h-screen bg-0a">
-      <header class="site-header sticky top-0 z-50 border-b border-white-10 bg-0a-90" transition:persist>
+      <header class="site-header sticky top-0 z-50 border-b border-white-10 bg-0a-90" transition:persist={`site-header-${lang}`}>
         <div class="site-wrap flex h-16 items-center justify-between gap-4">
-          <a class="flex items-baseline gap-2_5" aria-label={`${SITE.name}, home`} href="/">
+          <a class="flex items-baseline gap-2_5" aria-label={T.homeLabel} href={localize('/', lang)}>
             <span class="font-mono text-13 tracking-tight text-f2">{SITE.name}</span>
-            <span class="hidden sm-inline font-mono text-10 uppercase tracking-18 text-white-40">{SITE.role}</span>
+            <span class="hidden sm-inline font-mono text-10 uppercase tracking-18 text-white-40">{T.role}</span>
           </a>
-          <nav class="site-nav flex items-center gap-5 sm-gap-7" aria-label="Main">
+          <div class="header-actions">
+          <nav class="site-nav flex items-center gap-5 sm-gap-7" aria-label={T.mainNav}>
             {
-              NAV.map((n) => {
+              MAIN_NAV.map((n) => {
                 const active = path.startsWith(n.match);
                 return (
                   <a class="nav-link" data-nav={n.match} aria-current={active ? 'page' : undefined} href={n.href}>
@@ -108,16 +134,27 @@ const MOBILE_NAV = [
               })
             }
             <a
-              data-nav="/contact"
+              data-nav={localize('/contact', lang)}
               aria-current={isContact ? 'page' : undefined}
               class="nav-cta border border-accent-60 px-3 py-1_5 font-mono text-10 uppercase tracking-16 text-accent"
-              href="/contact/">Contact</a
+              href={localize('/contact/', lang)}>{T.nav.contact}</a
             >
           </nav>
+          <a
+            class="lang-switch"
+            href={otherPath}
+            hreflang={other}
+            lang={HTML_LANG[other]}
+            aria-label={T.langSwitchLabel}
+            title={T.langSwitch}
+            data-lang-switch={other}>{T.langSwitchShort}</a
+          >
           <button
             class="menu-toggle"
             type="button"
-            aria-label="Open menu"
+            aria-label={T.menuOpen}
+            data-label-open={T.menuOpen}
+            data-label-close={T.menuClose}
             aria-expanded="false"
             aria-controls="mobile-menu"
             data-menu-toggle
@@ -126,9 +163,10 @@ const MOBILE_NAV = [
             <span class="menu-toggle-bar"></span>
             <span class="menu-toggle-bar"></span>
           </button>
+          </div>
         </div>
         <div class="mobile-menu" id="mobile-menu" data-mobile-menu aria-hidden="true">
-          <nav class="mobile-menu-panel" aria-label="Mobile">
+          <nav class="mobile-menu-panel" aria-label={T.mobileNav}>
             <ul class="mobile-menu-links">
               {
                 MOBILE_NAV.map((n, i) => (
@@ -142,7 +180,7 @@ const MOBILE_NAV = [
               }
             </ul>
             <div class="mobile-menu-foot" style={`--i:${MOBILE_NAV.length}`}>
-              <p class="pill"><span class="hs7-dot" aria-hidden="true"></span>{SITE.availability}</p>
+              <p class="pill"><span class="hs7-dot" aria-hidden="true"></span>{T.availability}</p>
               <p class="mt-4 font-mono text-12_5 text-white-60">{SITE.email}</p>
             </div>
           </nav>
@@ -156,12 +194,12 @@ const MOBILE_NAV = [
       <footer class="border-t border-white-10 bg-05 py-10">
         <div class="site-wrap flex flex-col gap-5 sm-flex-row sm-items-center sm-justify-between">
           <p class="font-mono text-11 uppercase tracking-16 text-white-55">
-            © {new Date().getFullYear()} {SITE.name} · {SITE.location}
+            © {new Date().getFullYear()} {SITE.name} · {T.location}
           </p>
           <div class="flex flex-wrap items-center gap-5 font-mono text-11 uppercase tracking-14">
             <a href={SITE.github} target="_blank" rel="noreferrer" class="link-line text-white-60 hover-text-f2">GitHub</a>
             {SITE.linkedin && <a href={SITE.linkedin} target="_blank" rel="noreferrer" class="link-line text-white-60 hover-text-f2">LinkedIn</a>}
-            <a href="/contact/" class="link-line text-white-60 hover-text-f2">Contact</a>
+            <a href={localize('/contact/', lang)} class="link-line text-white-60 hover-text-f2">{T.footer.contact}</a>
           </div>
         </div>
       </footer>

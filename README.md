@@ -29,7 +29,20 @@ order: 1            # lower comes first
 ---
 ```
 
-Contact details (email, LinkedIn, CV) live in `src/site.ts`.
+Contact details (email, LinkedIn) live in `src/site.ts`.
+
+## Languages
+
+English is the default and lives at `/`; Serbian (Latin script) lives at `/sr/`.
+
+- Interface text for both languages is in `src/i18n/index.ts`.
+- A Serbian project is `src/content/projects-sr/<same id>.md`. It holds only the text (`summary`, `context`, optional `title`, `team`, gallery captions) and the translated body; everything else comes from the English file. Sub-pages go to `src/content/subpages-sr/<project>/<page>.md`.
+- Without a translation the Serbian page shows the English text with a short note.
+- Page layouts are in `src/views/`; the files in `src/pages/` and `src/pages/sr/` only choose the view.
+
+## CV
+
+The CV button opens a dialog: the standard PDF (`/cv/Vidan_Stojic_CV.pdf`, built at build time) or a custom one made in the browser from the projects the visitor picks. Both use `src/lib/cv/pdf.ts`; the CV text is in `src/lib/cv/data.ts`.
 
 ## Deploy
 

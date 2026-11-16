@@ -6,7 +6,7 @@ export const SITE = {
   role: 'Software engineer',
   title: 'Vidan Stojić — I build software from the kernel to the screen',
   description:
-    'Software engineering student in Belgrade. Android apps, backend services, compilers and OS kernels.',
+    'Software engineering student in Belgrade, one exam away from graduating. Android apps, backend services, compilers and OS kernels.',
   location: 'Belgrade, Serbia',
   availability: 'Open to graduate and junior roles, and to interesting projects',
   github: 'https://github.com/vidanstojic',

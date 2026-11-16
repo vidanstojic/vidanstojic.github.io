@@ -4,13 +4,17 @@
  * technology or course) and get a PDF in the same layout, built in the browser.
  * Opened by any element with [data-cv-open].
  */
-import { getCollection } from 'astro:content';
 import { LAYER_INFO } from '../site';
+import { langFromPath, t } from '../i18n';
+import { getProjects } from '../lib/projects';
 import { LAYERS } from '../content.config';
 import { CV_PROJECTS, DEFAULT_CV_PROJECTS } from '../lib/cv/data';
 import Icon from './Icon.astro';
 
-const projects = (await getCollection('projects'))
+const lang = langFromPath(Astro.url.pathname);
+const T = t(lang);
+const L = T.cv;
+const projects = (await getProjects(lang))
   .filter((p) => CV_PROJECTS[p.id])
   .sort((a, b) => Number(b.data.featured) - Number(a.data.featured) || a.data.order - b.data.order);
 
@@ -24,29 +28,29 @@ const layers = [...LAYERS].reverse();
 <dialog class="cv-dialog" data-cv-dialog aria-labelledby="cv-title">
   <div class="cv-panel">
     <header class="cv-head">
-      <button class="cv-back" type="button" data-cv-back hidden aria-label="Back">
+      <button class="cv-back" type="button" data-cv-back hidden aria-label={L.back}>
         <Icon name="arrow-left" class="icon-sm" />
       </button>
-      <h2 id="cv-title" class="cv-title" data-cv-heading>Download my CV</h2>
-      <button class="cv-close" type="button" data-cv-close aria-label="Close">
+      <h2 id="cv-title" class="cv-title" data-cv-heading>{L.heading}</h2>
+      <button class="cv-close" type="button" data-cv-close aria-label={L.close}>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
       </button>
     </header>
 
     <div class="cv-view" data-cv-view="choose">
-      <p class="cv-lead">Take the standard version, or build one with only the projects that matter for your role.</p>
+      <p class="cv-lead">{L.lead}{L.note && <> <span class="cv-note">{L.note}</span></>}</p>
       <div class="cv-options">
         <a class="cv-option" href="/cv/Vidan_Stojic_CV.pdf" download="Vidan_Stojic_CV.pdf" data-cv-default>
-          <span class="cv-option-kicker">Standard</span>
-          <span class="cv-option-title">My CV</span>
-          <span class="cv-option-text">One A4 page with six course projects across the stack.</span>
-          <span class="cv-option-go">Download PDF <Icon name="arrow-down" class="icon-sm" /></span>
+          <span class="cv-option-kicker">{L.standard}</span>
+          <span class="cv-option-title">{L.myCv}</span>
+          <span class="cv-option-text">{L.myCvText}</span>
+          <span class="cv-option-go">{L.downloadPdf} <Icon name="arrow-down" class="icon-sm" /></span>
         </a>
         <button class="cv-option" type="button" data-cv-build>
-          <span class="cv-option-kicker">Custom</span>
-          <span class="cv-option-title">Build your own</span>
-          <span class="cv-option-text">Pick projects by name, layer, technology or course. Same layout, made in your browser.</span>
-          <span class="cv-option-go">Choose projects <Icon name="arrow-right" class="icon-sm" /></span>
+          <span class="cv-option-kicker">{L.custom}</span>
+          <span class="cv-option-title">{L.build}</span>
+          <span class="cv-option-text">{L.buildText}</span>
+          <span class="cv-option-go">{L.choose} <Icon name="arrow-right" class="icon-sm" /></span>
         </button>
       </div>
     </div>
@@ -55,19 +59,19 @@ const layers = [...LAYERS].reverse();
       <div class="cv-filters">
         <label class="cv-search">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>
-          <input type="search" placeholder="Search by name, layer, technology or course" data-cv-search autocomplete="off" />
+          <input type="search" placeholder={L.search} aria-label={L.search} data-cv-search autocomplete="off" />
         </label>
-        <div class="cv-chips" role="group" aria-label="Layer">
-          <button class="cv-chip" type="button" data-cv-layer="" aria-pressed="true">All layers</button>
+        <div class="cv-chips" role="group" aria-label={L.layerGroup}>
+          <button class="cv-chip" type="button" data-cv-layer="" aria-pressed="true">{L.allLayers}</button>
           {
             layers.map((l) => (
               <button class="cv-chip" type="button" data-cv-layer={l} aria-pressed="false">
-                {LAYER_INFO[l].name}
+                {T.layers[l].name}
               </button>
             ))
           }
         </div>
-        <div class="cv-chips cv-tags" role="group" aria-label="Technology">
+        <div class="cv-chips cv-tags" role="group" aria-label={L.techGroup}>
           {
             tags.map((t) => (
               <button class="cv-chip cv-chip-tag" type="button" data-cv-tag={t.toLowerCase()} aria-pressed="false">
@@ -78,7 +82,7 @@ const layers = [...LAYERS].reverse();
           {
             tags.length > 12 && (
               <button class="cv-more" type="button" data-cv-more aria-expanded="false">
-                +{tags.length - 12} more
+                {L.more(tags.length - 12)}
               </button>
             )
           }
@@ -92,7 +96,7 @@ const layers = [...LAYERS].reverse();
               data-cv-item={p.id}
               data-layer={p.data.layer}
               data-tags={p.data.stack.map((t) => t.toLowerCase()).join('|')}
-              data-search={[p.data.title, p.data.summary, LAYER_INFO[p.data.layer].name, p.data.context, ...p.data.stack]
+              data-search={[p.data.title, p.data.summary, T.layers[p.data.layer].name, LAYER_INFO[p.data.layer].name, p.data.context, ...p.data.stack]
                 .join(' ')
                 .toLowerCase()}
             >
@@ -101,7 +105,7 @@ const layers = [...LAYERS].reverse();
                 <span class="cv-check" aria-hidden="true" data-cv-order />
                 <span class="cv-item-body">
                   <span class="cv-item-meta">
-                    {LAYER_INFO[p.data.layer].addr} · {LAYER_INFO[p.data.layer].name} · {p.data.context}
+                    {LAYER_INFO[p.data.layer].addr} · {T.layers[p.data.layer].name} · {p.data.context}
                   </span>
                   <span class="cv-item-title">{p.data.title}</span>
                   <span class="cv-item-tags">{p.data.stack.join(' · ')}</span>
@@ -111,21 +115,37 @@ const layers = [...LAYERS].reverse();
           ))
         }
       </ul>
-      <p class="cv-empty" data-cv-empty hidden>No project matches. Try another word or clear the filters.</p>
+      <p class="cv-empty" data-cv-empty hidden>{L.empty}</p>
 
       <footer class="cv-foot">
-        <p class="cv-count" data-cv-count aria-live="polite">Pick at least one project</p>
+        <p class="cv-count" data-cv-count aria-live="polite">{L.none}</p>
         <div class="cv-actions">
-          <button class="cv-link" type="button" data-cv-preset>Use my picks</button>
-          <button class="cv-link" type="button" data-cv-clear>Clear</button>
+          <button class="cv-link" type="button" data-cv-preset>{L.usePicks}</button>
+          <button class="cv-link" type="button" data-cv-clear>{L.clear}</button>
           <button class="btn btn-solid" type="button" data-cv-generate disabled>
-            <span class="btn-label">Download PDF</span>
+            <span class="btn-label">{L.downloadPdf}</span>
           </button>
         </div>
       </footer>
     </div>
   </div>
   <script type="application/json" data-cv-defaults set:html={JSON.stringify(DEFAULT_CV_PROJECTS)} />
+  <script
+    type="application/json"
+    data-cv-text
+    set:html={JSON.stringify({
+      heading: L.heading,
+      buildHeading: L.buildHeading,
+      none: L.none,
+      count: [1, 2, 3, 4, 5].map((n) => L.count(n).replace(String(n), '{n}')),
+      more: L.more(0).replace('0', '{n}'),
+      fewer: L.fewer,
+      building: L.building,
+      done: L.done,
+      failed: L.failed,
+      download: L.downloadPdf,
+    })}
+  />
 </dialog>
 
 <script>

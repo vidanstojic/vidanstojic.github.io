@@ -565,12 +565,24 @@ button[data-state='sending'] .btn-label::after { content: '…'; }
    desktop layout is untouched.
    ========================================================================= */
 
+/* Header: nav, language switch and (on phones) the menu button */
+.header-actions { display: flex; align-items: center; gap: 1.25rem; }
+@media (min-width: 640px) { .header-actions { gap: 1.75rem; } }
+.lang-switch {
+  display: inline-grid; place-content: center; min-width: 2.25rem; height: 1.85rem; padding: 0 0.45rem;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; color: rgba(242, 242, 242, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15); transition: color 0.2s, border-color 0.2s;
+}
+.lang-switch:hover, .lang-switch:focus-visible { color: #ff6a2b; border-color: rgba(255, 79, 0, 0.6); outline: none; }
+
 /* Hamburger button and menu exist in the markup but only appear below 768px */
 .menu-toggle, .mobile-menu { display: none; }
 
 @media (max-width: 767px) {
   /* ---------- Header: hamburger instead of the inline nav ---------- */
   .site-nav { display: none; }
+  .header-actions { gap: 0.5rem; }
+  .lang-switch { min-width: 44px; height: 44px; font-size: 12px; }
   .menu-toggle {
     display: inline-grid; place-content: center; gap: 5px; width: 48px; height: 48px; margin-right: -12px;
     background: none; border: 0; cursor: pointer; position: relative; z-index: 2; -webkit-tap-highlight-color: transparent;
@@ -844,3 +856,10 @@ html.cv-locked { overflow: hidden; }
   .cv-search input { font-size: 16px; }
 }
 @media (prefers-reduced-motion: reduce) { .cv-dialog[open] { animation: none; } }
+
+/* Serbian page whose body has no translation yet */
+.untranslated {
+  margin-bottom: 1.5rem; padding: 0.75rem 1rem; border-left: 2px solid #ff4f00; background: rgba(255, 79, 0, 0.06);
+  font-size: 14px; line-height: 1.55; color: rgba(242, 242, 242, 0.75);
+}
+.cv-note { color: rgba(242, 242, 242, 0.5); }

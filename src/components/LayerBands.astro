@@ -1,17 +1,20 @@
 ---
-import type { CollectionEntry } from 'astro:content';
 import { LAYERS } from '../content.config';
 import { LAYER_INFO } from '../site';
+import { langFromPath, localize, t } from '../i18n';
+import type { Project } from '../lib/projects';
 import Icon from './Icon.astro';
 
 interface Props {
-  projects: CollectionEntry<'projects'>[];
+  projects: Project[];
 }
 const { projects } = Astro.props;
 const topDown = [...LAYERS].reverse();
+const lang = langFromPath(Astro.url.pathname);
+const T = t(lang);
 ---
 
-<ol aria-label="Projects by layer, from interface down to kernel">
+<ol aria-label={T.bands.label}>
   {
     topDown.map((layer, i) => (
       <li
@@ -23,8 +26,8 @@ const topDown = [...LAYERS].reverse();
         <div class="site-wrap grid gap-5 py-9 md-cols-200-1 md-gap-10">
           <div class="layer-marker border-l-2 pl-4 transition-colors duration-300" data-reveal>
             <p class="font-mono text-10 uppercase tracking-20 text-white-35">{LAYER_INFO[layer].addr}</p>
-            <h3 class="mt-1_5 font-display text-15 uppercase tracking-12 text-f2">{LAYER_INFO[layer].name}</h3>
-            <p class="mt-1_5 text-12_5 leading-snug text-white-40">{LAYER_INFO[layer].blurb}</p>
+            <h3 class="mt-1_5 font-display text-15 uppercase tracking-12 text-f2">{T.layers[layer].name}</h3>
+            <p class="mt-1_5 text-12_5 leading-snug text-white-40">{T.layers[layer].blurb}</p>
           </div>
           <ul class="divide-y divide-white-07" data-stagger>
             {projects
@@ -37,12 +40,12 @@ const topDown = [...LAYERS].reverse();
                       'group inline-flex items-baseline gap-1_5 font-mono text-14_5 transition-colors hover-text-accent',
                       p.data.featured ? 'text-f2' : 'text-white-50',
                     ]}
-                    href={`/projects/${p.id}/`}
+                    href={localize(`/projects/${p.id}/`, lang)}
                   >
                     {p.data.title}
                     <Icon name="arrow-up-right" class="icon-sm -translate-x-1 opacity-0 transition-all group-hover-show" />
                   </a>
-                  {p.data.status !== 'complete' && <span class="wip">in progress</span>}
+                  {p.data.status !== 'complete' && <span class="wip">{T.bands.inProgress}</span>}
                   <span class="hidden lg-inline text-12_5 text-white-30">{p.data.context}</span>
                 </li>
               ))}

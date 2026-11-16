@@ -19,8 +19,45 @@ function toast(message, kind = 'ok') {
     toastTimer = window.setTimeout(() => el.classList.remove('is-shown'), 3200);
 }
 /* ---------- Header: active page indicator (header persists across pages) ---------- */
+/* ---------- Language ---------- */
+const MSG = {
+    en: {
+        copied: 'Copied!',
+        copiedToast: (t) => `Copied ${t}`,
+        copyFailed: (t) => `Couldn't copy. The address is ${t}`,
+        required: 'Required.',
+        badEmail: 'Enter a valid email address.',
+        tooShort: 'Write at least 10 characters.',
+        checkFields: 'Check the highlighted fields.',
+        sent: 'Message sent. Thanks!',
+        sendFailed: (to) => `Sending failed. Email me directly at ${to}.`,
+    },
+    sr: {
+        copied: 'Kopirano!',
+        copiedToast: (t) => `Kopirano: ${t}`,
+        copyFailed: (t) => `Kopiranje nije uspelo. Adresa je ${t}`,
+        required: 'Obavezno polje.',
+        badEmail: 'Unesite ispravnu email adresu.',
+        tooShort: 'Napišite bar 10 karaktera.',
+        checkFields: 'Proverite označena polja.',
+        sent: 'Poruka je poslata. Hvala!',
+        sendFailed: (to) => `Slanje nije uspelo. Pišite mi direktno na ${to}.`,
+    },
+};
+const lang = () => (document.documentElement.lang.startsWith('sr') ? 'sr' : 'en');
+const msg = () => MSG[lang()];
+/** The same page in the other language: /about/ <-> /sr/about/ */
+function otherLangPath(path) {
+    if (path === '/sr' || path === '/sr/') return '/';
+    if (path.startsWith('/sr/')) return path.slice(3);
+    return path === '/' ? '/sr/' : `/sr${path}`;
+}
+
 function updateNav() {
     const path = location.pathname;
+    document.querySelectorAll('[data-lang-switch]').forEach((a) => {
+        a.setAttribute('href', otherLangPath(path) + location.hash);
+    });
     document.querySelectorAll('[data-mnav]').forEach((a) => {
         const m = a.dataset.mnav;
         const active = a.hasAttribute('data-exact') ? path === m : path.startsWith(m);
@@ -44,7 +81,7 @@ function setMenu(open) {
     root.classList.toggle('menu-open', open);
     root.classList.toggle('menu-locked', open);
     toggle.setAttribute('aria-expanded', String(open));
-    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    toggle.setAttribute('aria-label', (open ? toggle.dataset.labelClose : toggle.dataset.labelOpen) || '');
     menu.setAttribute('aria-hidden', String(!open));
     menu.querySelectorAll('a').forEach((a) => a.setAttribute('tabindex', open ? '0' : '-1'));
     if (open) setTimeout(() => menu.querySelector('a')?.focus({ preventScroll: true }), 350);
@@ -355,17 +392,17 @@ function initCopy() {
                 await navigator.clipboard.writeText(text);
                 if (label) {
                     const prev = label.textContent;
-                    label.textContent = 'Copied!';
+                    label.textContent = msg().copied;
                     btn.classList.add('is-copied');
                     setTimeout(() => {
                         label.textContent = prev;
                         btn.classList.remove('is-copied');
                     }, 1800);
                 }
-                toast(`Copied ${text}`);
+                toast(msg().copiedToast(text));
             }
             catch {
-                toast(`Couldn't copy. The address is ${text}`, 'error');
+                toast(msg().copyFailed(text), 'error');
             }
         });
     });
@@ -389,11 +426,11 @@ function initContactForm() {
             let msg = '';
             const v = input.value.trim();
             if (!v)
-                msg = 'Required.';
+                msg = MSG[lang()].required;
             else if (f === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v))
-                msg = 'Enter a valid email address.';
+                msg = MSG[lang()].badEmail;
             else if (f === 'message' && v.length < 10)
-                msg = 'Write at least 10 characters.';
+                msg = MSG[lang()].tooShort;
             if (err)
                 err.textContent = msg;
             input.setAttribute('aria-invalid', msg ? 'true' : 'false');
@@ -410,7 +447,7 @@ function initContactForm() {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (!validate()) {
-            toast('Check the highlighted fields.', 'error');
+            toast(msg().checkFields, 'error');
             return;
         }
         const data = Object.fromEntries(new FormData(form));
@@ -460,10 +497,10 @@ function initContactForm() {
             form.reset();
             form.hidden = true;
             success?.removeAttribute('hidden');
-            toast('Message sent. Thanks!');
+            toast(msg().sent);
         }
         catch {
-            toast(`Sending failed. Email me directly at ${to}.`, 'error');
+            toast(msg().sendFailed(to), 'error');
         }
         finally {
             submit.disabled = false;

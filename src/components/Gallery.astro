@@ -1,11 +1,13 @@
 ---
 import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import { langFromPath, t } from '../i18n';
 
 interface Props {
   items: { src: ImageMetadata; alt: string; caption?: string }[];
 }
 const { items } = Astro.props;
+const T = t(langFromPath(Astro.url.pathname)).project;
 
 const isSvg = (m: ImageMetadata) => m.format === 'svg';
 const prepared = await Promise.all(
@@ -30,7 +32,7 @@ const prepared = await Promise.all(
               data-full={it.full}
               data-alt={it.alt}
               data-caption={it.caption ?? ''}
-              aria-label={`Enlarge: ${it.alt}`}
+              aria-label={T.enlarge(it.alt)}
             >
               <img src={it.thumb} alt={it.alt} loading="lazy" decoding="async" />
               {it.caption && <figcaption>{it.caption}</figcaption>}
@@ -39,19 +41,19 @@ const prepared = await Promise.all(
         ))}
       </div>
 
-      <dialog class="lightbox" data-lightbox aria-label="Image viewer">
+      <dialog class="lightbox" data-lightbox aria-label={T.viewer}>
         <img src="" alt="" />
         <div class="lightbox-bar">
           <p data-lightbox-caption />
           <div class="flex items-center gap-2">
             <span class="font-mono text-11 text-white-45" data-lightbox-count />
-            <button class="icon-btn" type="button" data-lightbox-prev aria-label="Previous image">
+            <button class="icon-btn" type="button" data-lightbox-prev aria-label={T.prev}>
               ‹
             </button>
-            <button class="icon-btn" type="button" data-lightbox-next aria-label="Next image">
+            <button class="icon-btn" type="button" data-lightbox-next aria-label={T.nextImage}>
               ›
             </button>
-            <button class="icon-btn" type="button" data-lightbox-close aria-label="Close">
+            <button class="icon-btn" type="button" data-lightbox-close aria-label={T.close}>
               ✕
             </button>
           </div>

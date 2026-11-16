@@ -1,0 +1,23 @@
+---
+import SubPage from '../../../../views/SubPage.astro';
+import { getProjects, getSubpages, type Project, type Subpage } from '../../../../lib/projects';
+
+export async function getStaticPaths() {
+  const projects = await getProjects('sr');
+  const subs = await getSubpages('sr');
+  return subs.map((sub) => {
+    const [slug, page] = sub.id.split('/');
+    const project = projects.find((p) => p.id === slug);
+    if (!project) throw new Error(`Sub-page ${sub.id} has no project "${slug}"`);
+    return { params: { slug, sub: page }, props: { sub, project } };
+  });
+}
+
+interface Props {
+  project: Project;
+  sub: Subpage;
+}
+const { project, sub } = Astro.props;
+---
+
+<SubPage project={project} sub={sub} />
