@@ -489,9 +489,6 @@ a, button, summary { transition: color 0.25s var(--ease-out), background-color 0
 @keyframes draw { to { stroke-dashoffset: 0; } }
 button[data-state='sending'] .btn-label::after { content: '…'; }
 
-.form-privacy a { color: rgba(242, 242, 242, 0.75); text-decoration: underline; text-underline-offset: 3px; }
-.form-privacy a:hover { color: #ff6a2b; }
-
 /* Availability pill */
 .pill {
   display: inline-flex; align-items: center; gap: 0.6rem; border: 1px solid rgba(255, 255, 255, 0.15);
