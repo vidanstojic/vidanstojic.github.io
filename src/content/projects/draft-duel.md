@@ -6,6 +6,7 @@ stack: [Kotlin Multiplatform, Compose Multiplatform, Coroutines, kotlinx.seriali
 team: Solo
 context: Personal project, in closed testing on Google Play
 status: preparing-release
+repo: https://github.com/vidanstojic/Draft-Duel
 icon: ../../assets/projects/draft-duel-icon.png
 gallery:
   - src: ../../assets/projects/draft-duel-home.png
