@@ -78,21 +78,21 @@ const facts: [string, string][] = [
       <div class="mt-7 flex flex-wrap items-center gap-3">
         {
           repo && (
-            <a class="btn btn-line" href={repo} target="_blank" rel="noreferrer">
+            <a class="btn btn-line" href={repo} target="_blank" rel="noreferrer" data-umami-event="Source code" data-umami-event-project={project.id}>
               {P.source} <Icon name="arrow-up-right" class="icon-sm" />
             </a>
           )
         }
         {
           repos.map((r) => (
-            <a class="btn btn-ghost" href={r.url} target="_blank" rel="noreferrer">
+            <a class="btn btn-ghost" href={r.url} target="_blank" rel="noreferrer" data-umami-event="Source code" data-umami-event-project={project.id}>
               {r.label} <Icon name="arrow-up-right" class="icon-sm" />
             </a>
           ))
         }
         {
           playStore && (
-            <a class="btn btn-solid" href={playStore} target="_blank" rel="noreferrer">
+            <a class="btn btn-solid" href={playStore} target="_blank" rel="noreferrer" data-umami-event="Google Play" data-umami-event-project={project.id}>
               {P.play} <Icon name="arrow-up-right" class="icon-sm" />
             </a>
           )

@@ -70,7 +70,7 @@ const C = T.contact;
         </button>
         {
           SITE.linkedin && (
-            <a class="contact-card" href={SITE.linkedin} target="_blank" rel="noreferrer">
+            <a class="contact-card" href={SITE.linkedin} target="_blank" rel="noreferrer" data-umami-event="LinkedIn profile" data-umami-event-from="contact">
               <span class="font-mono text-10 uppercase tracking-18 text-white-40">LinkedIn</span>
               <span class="font-mono text-13 text-f2">{SITE.linkedinHandle}</span>
               <span class="contact-action">
@@ -79,7 +79,7 @@ const C = T.contact;
             </a>
           )
         }
-        <a class="contact-card" href={SITE.github} target="_blank" rel="noreferrer">
+        <a class="contact-card" href={SITE.github} target="_blank" rel="noreferrer" data-umami-event="GitHub profile" data-umami-event-from="contact">
           <span class="font-mono text-10 uppercase tracking-18 text-white-40">GitHub</span>
           <span class="font-mono text-13 text-f2">{SITE.githubHandle}</span>
           <span class="contact-action">{C.browseCode} <Icon name="arrow-up-right" class="icon-sm" /></span>

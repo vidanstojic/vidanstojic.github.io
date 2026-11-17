@@ -111,6 +111,13 @@ const MAIN_NAV = NAV.map((n) => ({
         if (!window.__vsReady) document.documentElement.classList.remove('js');
       }, 2500);
     </script>
+    <!-- Umami: cookie-free visit counts, only on the live domain -->
+    <script
+      is:inline
+      defer
+      src="https://cloud.umami.is/script.js"
+      data-website-id="7f74f962-3b4a-4a93-b72d-6660b8af8065"
+      data-domains="vidanstojic.me"></script>
     <ClientRouter fallback="swap" />
   </head>
   <body>
@@ -147,7 +154,9 @@ const MAIN_NAV = NAV.map((n) => ({
             lang={HTML_LANG[other]}
             aria-label={T.langSwitchLabel}
             title={T.langSwitch}
-            data-lang-switch={other}>{T.langSwitchShort}</a
+            data-lang-switch={other}
+            data-umami-event="Language switch"
+            data-umami-event-to={other}>{T.langSwitchShort}</a
           >
           <button
             class="menu-toggle"
@@ -197,8 +206,8 @@ const MAIN_NAV = NAV.map((n) => ({
             © {new Date().getFullYear()} {SITE.name} · {T.location}
           </p>
           <div class="flex flex-wrap items-center gap-5 font-mono text-11 uppercase tracking-14">
-            <a href={SITE.github} target="_blank" rel="noreferrer" class="link-line text-white-60 hover-text-f2">GitHub</a>
-            {SITE.linkedin && <a href={SITE.linkedin} target="_blank" rel="noreferrer" class="link-line text-white-60 hover-text-f2">LinkedIn</a>}
+            <a href={SITE.github} target="_blank" rel="noreferrer" class="link-line text-white-60 hover-text-f2" data-umami-event="GitHub profile" data-umami-event-from="footer">GitHub</a>
+            {SITE.linkedin && <a href={SITE.linkedin} target="_blank" rel="noreferrer" class="link-line text-white-60 hover-text-f2" data-umami-event="LinkedIn profile" data-umami-event-from="footer">LinkedIn</a>}
             <a href={localize('/contact/', lang)} class="link-line text-white-60 hover-text-f2">{T.footer.contact}</a>
           </div>
         </div>

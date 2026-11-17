@@ -44,6 +44,7 @@ function open() {
   showView('choose');
   sync();
   d.showModal();
+  (window as { umami?: { track(name: string, data?: object): void } }).umami?.track('CV dialog open', { page: location.pathname });
   document.documentElement.classList.add('cv-locked');
 }
 
@@ -130,6 +131,10 @@ async function generate(button: HTMLButtonElement) {
     document.body.append(a);
     a.click();
     a.remove();
+    (window as { umami?: { track(name: string, data?: object): void } }).umami?.track('CV download', {
+      type: 'custom',
+      projects: picked.length,
+    });
     setTimeout(() => URL.revokeObjectURL(url), 60_000);
     label.textContent = T.done;
     setTimeout(() => (label.textContent = T.download), 2200);

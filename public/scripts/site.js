@@ -376,6 +376,7 @@ function initLightbox() {
             return;
         show(i);
         dialog.showModal();
+        window.umami?.track('Gallery open', { set, page: location.pathname });
     };
     all.forEach((it) => it.addEventListener('click', () => {
         const set = setOf(it);
@@ -521,6 +522,7 @@ function initContactForm() {
             const needsActivation = /activat/i.test(String(json.message ?? ''));
             if (failed && !needsActivation)
                 throw new Error(json.message || res.statusText);
+            window.umami?.track('Contact sent', { topic: String(data.topic ?? '') });
             form.reset();
             form.hidden = true;
             success?.removeAttribute('hidden');
