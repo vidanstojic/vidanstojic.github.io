@@ -7,6 +7,7 @@ team: Solo
 context: Personal project, preparing for Google Play
 status: preparing-release
 repo: https://github.com/vidanstojic/Screen-Manager
+icon: ../../assets/projects/focus-flow-icon.png
 gallery:
   - src: ../../assets/projects/focus-flow-home.png
     alt: Home screen with two sections, Screen Manager and Smart Alarms

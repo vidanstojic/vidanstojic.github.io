@@ -4,6 +4,7 @@
  * header, links, tab navigation, facts sidebar, body slot, next project.
  */
 import Base from './Base.astro';
+import { Image } from 'astro:assets';
 import Icon from '../components/Icon.astro';
 import { SITE, LAYER_INFO } from '../site';
 import { getProjects, getSubpages, type Project } from '../lib/projects';
@@ -19,7 +20,7 @@ interface Props {
 }
 
 const { project, current, pageTitle, untranslated = false } = Astro.props;
-const { title, summary, layer, stack, team, context, status, repo, repos, playStore, demo } = project.data;
+const { title, summary, layer, stack, team, context, status, repo, repos, playStore, demo, icon } = project.data;
 
 const lang = langFromPath(Astro.url.pathname);
 const T = t(lang);
@@ -61,12 +62,15 @@ const facts: [string, string][] = [
         <span class="tag-accent">{P.layer(T.layers[layer].name)}</span>
         <span class="status" data-status={status}>{T.status[status]}</span>
       </div>
-      <h1
-        class="mt-5 max-w-3xl font-display text-h1 font-medium leading-105 tracking-tight"
-        transition:name={`title-${project.id}`}
-      >
-        {title}
-      </h1>
+      <div class="mt-5 flex items-center gap-4">
+        {icon && <Image class="app-icon" src={icon} alt="" width={128} height={128} format="webp" />}
+        <h1
+          class="max-w-3xl font-display text-h1 font-medium leading-105 tracking-tight"
+          transition:name={`title-${project.id}`}
+        >
+          {title}
+        </h1>
+      </div>
       <p class="mt-5 max-w-2xl text-17 leading-relaxed text-white-70">{summary}</p>
       <ul class="mt-6 flex flex-wrap gap-1_5" aria-label={T.card.technologies}>
         {stack.map((s) => <li class="tech">{s}</li>)}

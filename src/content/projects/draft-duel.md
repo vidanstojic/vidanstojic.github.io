@@ -6,6 +6,7 @@ stack: [Kotlin Multiplatform, Compose Multiplatform, Ktor, WebSocket, PostgreSQL
 team: Solo
 context: Personal project, in design
 status: in-progress
+icon: ../../assets/projects/draft-duel-icon.png
 gallery:
   - src: ../../assets/projects/draft-duel-home.png
     alt: Home screen with a green card table and four modes - find opponent, play vs bot, same device and play a friend

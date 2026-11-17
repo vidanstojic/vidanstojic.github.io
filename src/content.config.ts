@@ -33,6 +33,8 @@ const projects = defineCollection({
       /** Extra source links, for projects split over several repositories. */
       repos: z.array(z.object({ label: z.string(), url: z.url() })).default([]),
       playStore: z.url().optional(),
+      /** App icon (512x512 PNG) shown next to the title, for released apps. */
+      icon: image().optional(),
       demo: z.url().optional(),
       /** Screenshots or diagrams. Images live in src/assets/projects/. */
       gallery: z
