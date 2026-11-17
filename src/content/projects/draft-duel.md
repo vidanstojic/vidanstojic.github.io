@@ -7,6 +7,18 @@ team: Solo
 context: Personal project, in design
 status: in-progress
 gallery:
+  - src: ../../assets/projects/draft-duel-home.png
+    alt: Home screen with a green card table and four modes - find opponent, play vs bot, same device and play a friend
+    caption: Home screen. Every mode is a quick 1v1 duel.
+  - src: ../../assets/projects/draft-duel-themes.png
+    alt: New match screen with theme tiles for movies and food, rule presets and a card pool by league
+    caption: Four themes, each with its own table surface and card pack.
+  - src: ../../assets/projects/draft-duel-rules.png
+    alt: Custom rules with points per player, cards per match, equal split, hand-over cost and turn time
+    caption: Custom rules. Bots are tuned for the Default and Classic presets.
+  - src: ../../assets/projects/draft-duel-leagues.png
+    alt: Card pool chosen by category, with England, France, Germany, Italy and Spain at 30 cards each
+    caption: Football cards come from five leagues, 30 players each.
   - src: ../../assets/projects/draft-duel-states.svg
     alt: Match state machine with states waiting, drawing, bidding, choosing, awarded, scoring, finished, paused and abandoned
     caption: The match state machine from the specification.
@@ -32,3 +44,7 @@ Two players share a pool of ten athlete cards and a budget of 20 points each. Ca
 - **Edge cases in the rules.** A player with no budget left, or one with a full team, follows explicit rules written as a table of examples that become unit tests.
 
 The specification and UI design are done; implementation is next.
+
+## Privacy
+
+The app has no account, no analytics, no ads and no internet permission. Settings and the list of cards already played stay on the phone. Details are in the [Privacy policy](/privacy/draft-duel/).

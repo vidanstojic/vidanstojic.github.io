@@ -441,6 +441,9 @@ a, button, summary { transition: color 0.25s var(--ease-out), background-color 0
 }
 .gallery button:hover { border-color: rgba(255, 79, 0, 0.6); }
 .gallery img { width: 100%; aspect-ratio: 16 / 10; object-fit: contain; background: #0a0a0a; }
+.gallery + .gallery { margin-top: 0.75rem; }
+.gallery--portrait { grid-template-columns: repeat(auto-fill, minmax(min(100%, 140px), 1fr)); }
+.gallery--portrait img { aspect-ratio: 9 / 16; object-fit: cover; }
 .gallery figcaption { padding: 0.7rem 0.85rem; font-size: 12.5px; color: rgba(242, 242, 242, 0.55); line-height: 1.45; }
 
 /* Lightbox */

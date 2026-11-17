@@ -18,13 +18,22 @@ const prepared = await Promise.all(
     return { ...it, thumb: thumb.src, full: full.src };
   }),
 );
+
+// Phone screenshots get their own row of narrow 9:16 tiles; diagrams and
+// landscape images keep the wide 16:10 grid below them.
+const isPortrait = (m: ImageMetadata) => !isSvg(m) && m.height > m.width;
+const groups = [
+  { cls: 'gallery gallery--portrait', items: prepared.filter((it) => isPortrait(it.src)) },
+  { cls: 'gallery', items: prepared.filter((it) => !isPortrait(it.src)) },
+].filter((g) => g.items.length > 0);
 ---
 
 {
   prepared.length > 0 && (
     <>
-      <div class="gallery" data-stagger>
-        {prepared.map((it) => (
+      {groups.map((group) => (
+      <div class={group.cls} data-stagger>
+        {group.items.map((it) => (
           <figure style="margin:0">
             <button
               type="button"
@@ -40,6 +49,7 @@ const prepared = await Promise.all(
           </figure>
         ))}
       </div>
+      ))}
 
       <dialog class="lightbox" data-lightbox aria-label={T.viewer}>
         <img src="" alt="" />

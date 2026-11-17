@@ -3,6 +3,14 @@ summary: Trominutna 1v1 mobilna igra u kojoj dva igrača sa istim budžetom lici
 team: Samostalno
 context: Lični projekat, u fazi dizajna
 gallery:
+  - alt: Početni ekran sa zelenim stolom za karte i četiri moda - protivnik, bot, isti telefon i prijatelj
+    caption: Početni ekran. Svaki mod je brzi 1v1 duel.
+  - alt: Ekran nove partije sa temama filmovi i hrana, unapred zadatim pravilima i kartama po ligama
+    caption: Četiri teme, svaka sa svojom podlogom i paketom karata.
+  - alt: Sopstvena pravila - poeni po igraču, broj karata, jednak broj karata, cena predaje i vreme poteza
+    caption: Sopstvena pravila. Botovi su podešeni za Default i Classic.
+  - alt: Izbor karata po kategoriji - Engleska, Francuska, Nemačka, Italija i Španija sa po 30 karata
+    caption: Fudbalske karte dolaze iz pet liga, po 30 igrača.
   - alt: Mašina stanja meča sa stanjima čekanje, izvlačenje, licitiranje, biranje, dodeljeno, bodovanje, završeno, pauzirano i napušteno
     caption: Mašina stanja meča iz specifikacije.
 ---
@@ -25,3 +33,7 @@ Dva igrača dele skup od deset karata sa sportistima i imaju po 20 poena budžet
 - **Granični slučajevi u pravilima.** Igrač bez budžeta ili sa punim timom prati eksplicitna pravila zapisana kao tabela primera, koji postaju unit testovi.
 
 Specifikacija i dizajn interfejsa su gotovi; sledeći korak je implementacija.
+
+## Privatnost
+
+Aplikacija nema nalog, analitiku, reklame ni dozvolu za internet. Podešavanja i spisak već odigranih karata ostaju na telefonu. Detalji su u [Politici privatnosti](/sr/privacy/draft-duel/).
