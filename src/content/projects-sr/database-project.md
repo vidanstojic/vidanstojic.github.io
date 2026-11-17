@@ -2,6 +2,9 @@
 title: Baza za međuplanetarno preseljenje
 summary: Java desktop aplikacija nad SQL bazom za planiranje preseljenja na nastanjive planete — filteri nastanjivosti, smeštaj i rezervacije prevoza.
 context: Predmet Baze podataka, RAF
+gallery:
+  - alt: "Šema baze sa planetama, misijama, stambenim objektima, putovanjima, stanovnicima, registrovanim korisnicima, kupljenim objektima i kartama"
+    caption: "Šema baze. Planete i registrovani korisnici su dva čvora na koja se sve ostalo oslanja."
 ---
 
 ## Problem i cilj

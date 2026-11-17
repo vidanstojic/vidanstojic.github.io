@@ -1,6 +1,9 @@
 ---
 summary: Android aplikacija za pregled rasa mačaka, sa pretragom, detaljima rase i galerijom fotografija, zasnovana na MVI arhitekturi.
 context: Predmet Razvoj mobilnih aplikacija, RAF
+gallery:
+  - alt: "Tok podataka u CatApp-u od Compose ekrana, preko ViewModel-a i repozitorijuma, do Room baze, TheCatAPI servisa i DataStore-a"
+    caption: "Jednosmerni tok podataka. Interfejs čita samo iz Room baze, a mreža je popunjava jednom, pri prvom pokretanju."
 ---
 
 ## Problem i cilj

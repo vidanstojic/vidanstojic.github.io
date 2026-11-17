@@ -7,6 +7,10 @@ team: Team of 2
 context: Parallel Algorithms course, RAF
 repo: https://github.com/vidanstojic/Parallel-algorithms-first
 order: 60
+gallery:
+  - src: ../../assets/projects/parallel-image-processing-flow.svg
+    alt: "Command loop starting threads for add, process, delete and list, a process pool applying filters, and an image registry"
+    caption: "Commands run in threads, filters run in a process pool, and every result lands in the registry."
 ---
 
 ## Problem and goal

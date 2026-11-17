@@ -2,6 +2,9 @@
 summary: Java desktop editor za UML dijagrame klasa i mape uma, zasnovan na MVC-u i klasičnim projektnim obrascima.
 team: Tim od 2
 context: Predmet Dizajn softvera, RAF
+gallery:
+  - alt: "Dijagram klasa Classy Craft-a sa Composite stablom modela, State obrascem za alate na platnu i Command obrascem za poništavanje i ponavljanje"
+    caption: "Osnovne klase: Composite za stablo projekta, State za alate na platnu, Command za undo i redo."
 ---
 
 ## Problem i cilj

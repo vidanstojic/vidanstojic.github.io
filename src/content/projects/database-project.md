@@ -6,6 +6,10 @@ stack: [Java, JDBC, MySQL]
 context: Databases course, RAF
 repo: https://github.com/vidanstojic/Data-Base-Project
 order: 80
+gallery:
+  - src: ../../assets/projects/database-project-schema.svg
+    alt: "Database schema with planets, missions, housing, journeys, residents, registered users, bought housing and bought tickets"
+    caption: "The schema. Planets and registered users are the two hubs everything else points to."
 ---
 
 ## Problem and goal

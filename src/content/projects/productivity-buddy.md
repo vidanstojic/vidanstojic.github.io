@@ -6,6 +6,10 @@ stack: [Java 21, JavaFX, Maven, OSHI]
 repo: https://github.com/vidanstojic/ProductivityBuddy
 context: University project
 order: 30
+gallery:
+  - src: ../../assets/projects/productivity-buddy-modules.svg
+    alt: "ProductivityBuddy Maven modules: scanner, data service, analytics engine and JavaFX view, with JSON and CSV files on disk"
+    caption: "Four Maven modules, one responsibility each. The registry in data-service is the shared state."
 ---
 
 ## Problem and goal

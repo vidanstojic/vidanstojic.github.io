@@ -7,6 +7,10 @@ team: Team of 2
 context: Parallel Algorithms course, RAF
 repo: https://github.com/vidanstojic/Parallel-algorithms
 order: 70
+gallery:
+  - src: ../../assets/projects/histogram-classifier-pipeline.svg
+    alt: "Classifier pipeline: CIFAR-10 images become RGB histograms averaged into class profiles; a new image is matched by cosine similarity"
+    caption: "Training builds one profile per class; classifying picks the most similar profile."
 ---
 
 ## Problem and goal

@@ -6,6 +6,10 @@ stack: [Kotlin, Jetpack Compose, Hilt, Room, DataStore, Coroutines]
 context: Mobile Application Development course, RAF
 repo: https://github.com/vidanstojic/CatApp---Mobile-application-development
 order: 40
+gallery:
+  - src: ../../assets/projects/catapp-dataflow.svg
+    alt: "CatApp data flow from Compose screens through the ViewModel and repository to Room, TheCatAPI and DataStore"
+    caption: "Unidirectional data flow. The UI reads only from Room; the network fills it once on first launch."
 ---
 
 ## Problem and goal

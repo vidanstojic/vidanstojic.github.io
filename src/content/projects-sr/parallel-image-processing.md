@@ -3,6 +3,9 @@ title: Paralelna obrada slika
 summary: Python sistem koji paralelno primenjuje filtere na velike skupove slika i vodi registar svake slike i zadatka.
 team: Tim od 2
 context: Predmet Paralelni algoritmi, RAF
+gallery:
+  - alt: "Petlja komandi koja pokreće niti za add, process, delete i list, skup procesa koji primenjuje filtere i registar slika"
+    caption: "Komande rade u nitima, filteri u skupu procesa, a svaki rezultat završava u registru."
 ---
 
 ## Problem i cilj

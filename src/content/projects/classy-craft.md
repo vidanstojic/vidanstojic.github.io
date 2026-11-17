@@ -7,6 +7,10 @@ team: Team of 2
 context: Software Design course, RAF
 repo: https://github.com/vidanstojic/Classy-Craft---Dizajn-softvera
 order: 50
+gallery:
+  - src: ../../assets/projects/classy-craft-uml.svg
+    alt: "Classy Craft class diagram with the Composite model tree, the State pattern for canvas tools and the Command pattern for undo and redo"
+    caption: "Core classes: Composite for the project tree, State for canvas tools, Command for undo and redo."
 ---
 
 ## Problem and goal

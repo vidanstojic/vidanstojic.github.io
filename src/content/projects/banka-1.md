@@ -7,6 +7,10 @@ team: Team project
 context: Team project, RAF
 repo: https://github.com/vidanstojic/Banka-1-Backend
 order: 10
+gallery:
+  - src: ../../assets/projects/banka-1-services.svg
+    alt: "Banka 1 services: clients reach an Nginx API gateway that routes to Spring Boot services sharing PostgreSQL and RabbitMQ, with an observability stack"
+    caption: "Services behind the API gateway. Accounts, cards, transfers, transactions and credits run in one banking service."
 ---
 
 ## Problem and goal

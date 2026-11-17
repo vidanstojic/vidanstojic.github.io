@@ -2,6 +2,9 @@
 summary: Mikroservisni backend za bankarski sistem — računi, kartice, krediti, transferi, menjačnica i trgovanje — koji je napravio studentski tim.
 team: Timski projekat
 context: Timski projekat, RAF
+gallery:
+  - alt: "Servisi Banke 1: klijenti stižu do Nginx API gateway-a koji prosleđuje zahteve Spring Boot servisima sa zajedničkim PostgreSQL-om i RabbitMQ-om, uz sistem za praćenje"
+    caption: "Servisi iza API gateway-a. Računi, kartice, prenosi, transakcije i krediti rade u jednom bankarskom servisu."
 ---
 
 ## Problem i cilj

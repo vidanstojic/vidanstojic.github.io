@@ -3,6 +3,9 @@ title: Klasifikator po histogramu boja
 summary: Klasifikator slika zasnovan na 3D histogramima boja i kosinusnoj sličnosti, napisan u strogo funkcionalnom stilu, bez petlji.
 team: Tim od 2
 context: Predmet Paralelni algoritmi, RAF
+gallery:
+  - alt: "Tok klasifikatora: CIFAR-10 slike postaju RGB histogrami koji se usrednjavaju u profile klasa, a nova slika se poredi kosinusnom sličnošću"
+    caption: "Učenje pravi po jedan profil za svaku klasu, a klasifikacija bira najsličniji profil."
 ---
 
 ## Problem i cilj

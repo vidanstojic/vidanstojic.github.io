@@ -1,6 +1,9 @@
 ---
 summary: JavaFX desktop aplikacija koja prati pokrenute procese, omogućava da ih označite kao posao ili zabavu i u realnom vremenu pokazuje gde odlazi vreme za računarom.
 context: Univerzitetski projekat
+gallery:
+  - alt: "Maven moduli ProductivityBuddy-ja: skener, servis podataka, analitika i JavaFX prikaz, sa JSON i CSV fajlovima na disku"
+    caption: "Četiri Maven modula, svaki sa jednom odgovornošću. Registar u data-service modulu je zajedničko stanje."
 ---
 
 ## Problem i cilj
