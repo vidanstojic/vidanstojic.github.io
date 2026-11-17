@@ -8,6 +8,27 @@ context: Personal project, preparing for Google Play
 status: preparing-release
 repo: https://github.com/vidanstojic/Screen-Manager
 gallery:
+  - src: ../../assets/projects/focus-flow-home.png
+    alt: Home screen with two sections, Screen Manager and Smart Alarms
+    caption: "Home: screen time and alarms in one app."
+  - src: ../../assets/projects/focus-flow-overview.png
+    alt: Screen Manager overview with screen time today, an hourly chart, the most used apps and active protections
+    caption: "Overview: today's screen time by hour and the most used apps."
+  - src: ../../assets/projects/focus-flow-stats.png
+    alt: Screen time statistics with day, week and month tabs, an hourly bar chart and a list of apps
+    caption: "Statistics by day, week and month. Tap a bar to see that hour."
+  - src: ../../assets/projects/focus-flow-limits.png
+    alt: Limits screen with daily limits, session limits and schedules such as night focus and work hours
+    caption: "Daily limits, session limits and schedules."
+  - src: ../../assets/projects/focus-flow-shorts.png
+    alt: Shorts and Reels daily budget, morning lock after waking up and an emergency pause for all limits
+    caption: "Shorts and Reels blocker, morning lock and emergency pause."
+  - src: ../../assets/projects/focus-flow-alarm.png
+    alt: New alarm screen with tone, volume, a gradually louder start, vibration and snooze settings
+    caption: "Smart alarm that starts quietly and gets louder."
+  - src: ../../assets/projects/focus-flow-mission.png
+    alt: Alarm settings with a wake-up mission (math, typing or steps), wake-up detox and a check that you are really up
+    caption: "Wake-up missions, app blocking after waking and an \"are you up\" check."
   - src: ../../assets/projects/focus-flow-dataflow.svg
     alt: Data flow from Android usage events through session reconstruction and hourly rollups to the rules engine and the block screen
     caption: From raw Android events to a blocking decision. Orange parts are plain Kotlin, tested without an emulator.

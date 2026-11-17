@@ -351,20 +351,37 @@ function initLightbox() {
     const img = dialog.querySelector('img');
     const cap = dialog.querySelector('[data-lightbox-caption]');
     const counter = dialog.querySelector('[data-lightbox-count]');
-    const items = Array.from(document.querySelectorAll('[data-gallery-item]'));
+    const all = Array.from(document.querySelectorAll('[data-gallery-item]'));
+    // Each set (app screens, diagrams) is browsed on its own.
+    const setOf = (el) => el.dataset.gallerySet ?? 'default';
+    let items = [];
     let index = 0;
     const show = (i) => {
         index = (i + items.length) % items.length;
         const it = items[index];
+        dialog.classList.toggle('is-portrait', it.hasAttribute('data-portrait'));
         img.src = it.dataset.full;
         img.alt = it.dataset.alt ?? '';
         cap.textContent = it.dataset.caption ?? '';
         counter.textContent = `${index + 1} / ${items.length}`;
+        // Warm up the neighbours so arrows and swipes feel instant.
+        [index - 1, index + 1].forEach((n) => {
+            const nb = items[(n + items.length) % items.length];
+            if (nb) new Image().src = nb.dataset.full;
+        });
     };
-    items.forEach((it, i) => it.addEventListener('click', () => {
+    const open = (set, i) => {
+        items = all.filter((el) => setOf(el) === set);
+        if (!items.length)
+            return;
         show(i);
         dialog.showModal();
+    };
+    all.forEach((it) => it.addEventListener('click', () => {
+        const set = setOf(it);
+        open(set, all.filter((el) => setOf(el) === set).indexOf(it));
     }));
+    document.querySelectorAll('[data-gallery-open]').forEach((btn) => btn.addEventListener('click', () => open(btn.dataset.galleryOpen, 0)));
     dialog.querySelector('[data-lightbox-prev]')?.addEventListener('click', () => show(index - 1));
     dialog.querySelector('[data-lightbox-next]')?.addEventListener('click', () => show(index + 1));
     dialog.querySelector('[data-lightbox-close]')?.addEventListener('click', () => dialog.close());
@@ -377,6 +394,16 @@ function initLightbox() {
             show(index - 1);
         if (e.key === 'ArrowRight')
             show(index + 1);
+    });
+    let startX = null;
+    img.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+    img.addEventListener('touchend', (e) => {
+        if (startX === null)
+            return;
+        const dx = e.changedTouches[0].clientX - startX;
+        startX = null;
+        if (Math.abs(dx) > 40)
+            show(dx < 0 ? index + 1 : index - 1);
     });
 }
 /* ---------- Copy email ---------- */

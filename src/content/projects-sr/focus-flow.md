@@ -3,6 +3,20 @@ summary: Android aplikacija koja prati vreme provedeno na ekranu i sprovodi ogra
 team: Samostalno
 context: Lični projekat, u pripremi za Google Play
 gallery:
+  - alt: Početni ekran sa dva dela, Screen Manager i Smart Alarms
+    caption: "Početni ekran: vreme na ekranu i alarmi u jednoj aplikaciji."
+  - alt: Pregled sa današnjim vremenom na ekranu, grafikonom po satima, najkorišćenijim aplikacijama i aktivnim zaštitama
+    caption: "Pregled: današnje vreme na ekranu po satima i najkorišćenije aplikacije."
+  - alt: Statistika vremena na ekranu po danu, nedelji i mesecu, sa grafikonom po satima i listom aplikacija
+    caption: "Statistika po danu, nedelji i mesecu. Dodir na stubić prikazuje taj sat."
+  - alt: "Ekran sa limitima: dnevni limiti, limiti sesija i rasporedi kao što su noćni fokus i radno vreme"
+    caption: "Dnevni limiti, limiti sesija i rasporedi."
+  - alt: Dnevni budžet za Shorts i Reels, jutarnja blokada posle buđenja i hitna pauza svih limita
+    caption: "Blokada Shorts i Reels snimaka, jutarnja blokada i hitna pauza."
+  - alt: Novi alarm sa tonom, jačinom, postepenim pojačavanjem, vibracijom i odlaganjem
+    caption: "Pametni alarm koji počinje tiho i postepeno se pojačava."
+  - alt: Podešavanja alarma sa misijom za buđenje (matematika, kucanje ili koraci), detoksom posle buđenja i proverom da ste zaista ustali
+    caption: "Misije za buđenje, blokada aplikacija posle buđenja i provera „da li si ustao\"."
   - alt: Tok podataka od Android događaja korišćenja, preko rekonstrukcije sesija i satnih zbirova, do mehanizma pravila i ekrana za blokadu
     caption: Od sirovih Android događaja do odluke o blokadi. Narandžasti delovi su čist Kotlin, testiran bez emulatora.
 ---

@@ -3,17 +3,14 @@ import { render } from 'astro:content';
 import ProjectShell from '../layouts/ProjectShell.astro';
 import Gallery from '../components/Gallery.astro';
 import type { Project } from '../lib/projects';
-import { HTML_LANG, langFromPath, t } from '../i18n';
+import { HTML_LANG, langFromPath } from '../i18n';
 
 interface Props {
   project: Project;
 }
 const { project } = Astro.props;
 const lang = langFromPath(Astro.url.pathname);
-const P = t(lang).project;
 const { Content } = await render(project.entry);
-const gallery = project.data.gallery;
-const onlyDiagrams = gallery.length > 0 && gallery.every((g) => g.src.format === 'svg');
 ---
 
 <ProjectShell project={project} untranslated={!project.translated}>
@@ -22,17 +19,5 @@ const onlyDiagrams = gallery.length > 0 && gallery.every((g) => g.src.format ===
       <Content />
     </div>
   </div>
-  {
-    gallery.length > 0 && (
-      <section class="mt-14" aria-labelledby="gallery-title">
-        <h2 id="gallery-title" class="label">
-          {onlyDiagrams ? P.diagrams : P.gallery}
-        </h2>
-        <p class="mt-2 text-12_5 text-white-40">{P.enlargeHint}</p>
-        <div class="mt-5">
-          <Gallery items={gallery} />
-        </div>
-      </section>
-    )
-  }
+  <Gallery items={project.data.gallery} />
 </ProjectShell>
