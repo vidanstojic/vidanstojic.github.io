@@ -1,0 +1,73 @@
+---
+/**
+ * Privacy page for the site itself (/privacy/), plus the list of app privacy
+ * policies. Text lives in src/legal/site.{en,sr}.md.
+ */
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { langFromPath, localize } from '../i18n';
+import * as SiteEn from '../legal/site.en.md';
+import * as SiteSr from '../legal/site.sr.md';
+
+const lang = langFromPath(Astro.url.pathname);
+const { Content } = { en: SiteEn, sr: SiteSr }[lang];
+
+/** Every app with a published policy. Add a line when a new app ships. */
+const APPS = [
+  { name: 'Draft Duel', href: '/privacy/draft-duel/', note: { en: 'Card auction game for Android', sr: 'Aukcijska igra sa kartama za Android' } },
+  { name: 'Focus Flow', href: '/projects/focus-flow/privacy/', note: { en: 'Screen time and smart alarms for Android', sr: 'Vreme na ekranu i pametni alarmi za Android' } },
+];
+
+const T = {
+  en: {
+    label: 'Privacy',
+    title: 'Privacy on this site',
+    description: 'What vidanstojic.me collects when you visit it, and the privacy policies of my apps.',
+    updated: 'Effective date',
+    date: '17 November 2026',
+    apps: 'App privacy policies',
+    open: 'Read the policy',
+  },
+  sr: {
+    label: 'Privatnost',
+    title: 'Privatnost na ovom sajtu',
+    description: 'Šta vidanstojic.me beleži kada ga posetite i politike privatnosti mojih aplikacija.',
+    updated: 'Važi od',
+    date: '17. novembar 2026.',
+    apps: 'Politike privatnosti aplikacija',
+    open: 'Pročitaj politiku',
+  },
+}[lang];
+---
+
+<Base title={`${T.title} — Vidan Stojić`} description={T.description}>
+  <main class="site-wrap py-20">
+    <span class="tag-accent">{T.label}</span>
+    <h1 class="mt-5 max-w-3xl font-display text-h1 font-medium leading-105 tracking-tight">{T.title}</h1>
+    <p class="mt-4 font-mono text-10 uppercase tracking-16 text-white-55">{T.updated}: {T.date}</p>
+    <div class="prose-tech mt-10 max-w-38">
+      <Content />
+    </div>
+
+    <section class="mt-16 max-w-38" aria-labelledby="apps-title">
+      <h2 id="apps-title" class="label">{T.apps}</h2>
+      <ul class="privacy-apps mt-5">
+        {
+          APPS.map((a) => (
+            <li>
+              <a href={localize(a.href, lang)}>
+                <span>
+                  <span class="block font-display text-17 font-medium text-f2">{a.name}</span>
+                  <span class="mt-1 block text-14_5 text-white-60">{a.note[lang]}</span>
+                </span>
+                <span class="privacy-apps-go font-mono text-11 uppercase tracking-14">
+                  {T.open} <Icon name="arrow-right" class="icon-sm" />
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </main>
+</Base>

@@ -117,7 +117,8 @@ const MAIN_NAV = NAV.map((n) => ({
       defer
       src="https://cloud.umami.is/script.js"
       data-website-id="7f74f962-3b4a-4a93-b72d-6660b8af8065"
-      data-domains="vidanstojic.me"></script>
+      data-domains="vidanstojic.me"
+      data-do-not-track="true"></script>
     <ClientRouter fallback="swap" />
   </head>
   <body>
@@ -209,6 +210,7 @@ const MAIN_NAV = NAV.map((n) => ({
             <a href={SITE.github} target="_blank" rel="noreferrer" class="link-line text-white-60 hover-text-f2" data-umami-event="GitHub profile" data-umami-event-from="footer">GitHub</a>
             {SITE.linkedin && <a href={SITE.linkedin} target="_blank" rel="noreferrer" class="link-line text-white-60 hover-text-f2" data-umami-event="LinkedIn profile" data-umami-event-from="footer">LinkedIn</a>}
             <a href={localize('/contact/', lang)} class="link-line text-white-60 hover-text-f2">{T.footer.contact}</a>
+            <a href={localize('/privacy/', lang)} class="link-line text-white-60 hover-text-f2">{T.footer.privacy}</a>
           </div>
         </div>
       </footer>

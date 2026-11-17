@@ -199,7 +199,7 @@ const en = {
     cvAction: 'Download or build your own',
   },
 
-  footer: { contact: 'Contact' },
+  footer: { contact: 'Contact', privacy: 'Privacy' },
 
   cv: {
     heading: 'Download my CV',
@@ -410,7 +410,7 @@ const sr: Dict = {
     cvAction: 'Preuzmi ili sastavi svoj',
   },
 
-  footer: { contact: 'Kontakt' },
+  footer: { contact: 'Kontakt', privacy: 'Privatnost' },
 
   cv: {
     heading: 'Preuzmi moj CV',

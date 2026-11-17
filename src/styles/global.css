@@ -541,6 +541,15 @@ button[data-state='sending'] .btn-label::after { content: '…'; }
   .tl-body { padding-left: 0; }
 }
 
+/* Privacy: list of app policies */
+.privacy-apps { display: grid; gap: 0.75rem; }
+.privacy-apps a {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 1.5rem;
+  padding: 1.1rem 1.25rem; border: 1px solid rgba(255, 255, 255, 0.1); background: #0d0d0f; transition: border-color 0.25s;
+}
+.privacy-apps a:hover { border-color: rgba(255, 79, 0, 0.6); }
+.privacy-apps-go { display: inline-flex; align-items: center; gap: 0.5rem; color: #ff6a2b; }
+
 /* About: tech stack */
 .tech-group { border: 1px solid rgba(255, 255, 255, 0.1); padding: 1.25rem; background: #0d0d0f; }
 .tech-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: 0.5rem; margin-top: 1rem; }
