@@ -50,7 +50,7 @@ const en = {
   langSwitchLabel: 'Ova stranica na srpskom',
 
   layers: {
-    interface: { name: 'Interface', blurb: 'Apps people touch' },
+    interface: { name: 'Interface', blurb: 'Apps with their own users' },
     services: { name: 'Services', blurb: 'Servers, APIs, real-time' },
     data: { name: 'Data', blurb: 'Processing, storage, reports' },
     language: { name: 'Language', blurb: 'Parsing and interpreting code' },
@@ -72,7 +72,7 @@ const en = {
     introLabel: 'Introduction',
     cta: 'Read the work',
     workTitle: 'Work, layer by layer',
-    workText: 'Every project sits on the layer of the stack it lives in, from the apps people touch down to the kernel.',
+    workText: 'Every project sits on the layer of the stack it lives in, from the interface down to the kernel.',
     selected: 'Selected projects',
     all: (n: number) => `All ${n} projects`,
     ctaTitle: 'Building something where the details matter?',
@@ -254,7 +254,7 @@ const sr: Dict = {
   langSwitchLabel: 'This page in English',
 
   layers: {
-    interface: { name: 'Interfejs', blurb: 'Aplikacije koje ljudi koriste' },
+    interface: { name: 'Interfejs', blurb: 'Aplikacije sa svojim korisnicima' },
     services: { name: 'Servisi', blurb: 'Serveri, API-ji, rad u realnom vremenu' },
     data: { name: 'Podaci', blurb: 'Obrada, skladištenje, izveštaji' },
     language: { name: 'Jezik', blurb: 'Parsiranje i izvršavanje koda' },
@@ -276,7 +276,7 @@ const sr: Dict = {
     introLabel: 'Uvod',
     cta: 'Pogledaj radove',
     workTitle: 'Radovi, sloj po sloj',
-    workText: 'Svaki projekat stoji na sloju na kom zaista radi, od aplikacija koje ljudi koriste do kernela.',
+    workText: 'Svaki projekat stoji na sloju na kom zaista radi, od interfejsa do kernela.',
     selected: 'Izdvojeni projekti',
     all: (n: number) => `Svih ${n} projekata`,
     ctaTitle: 'Radite na nečemu gde su detalji važni?',
