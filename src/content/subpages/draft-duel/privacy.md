@@ -1,3 +1,12 @@
+---
+title: Draft Duel Privacy Policy
+tab: Privacy policy
+summary: What the Draft Duel app stores on your phone, the one permission it asks for, and what it never collects. Effective November 17, 2026.
+order: 4
+---
+
+_Effective: November 17, 2026_
+
 Draft Duel ("the app") is a game developed by Vidan Stojić, an individual developer in Belgrade, Serbia. This policy explains what the app does with information about you and your device.
 
 ## Information we collect

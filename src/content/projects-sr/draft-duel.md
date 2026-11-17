@@ -27,6 +27,8 @@ Dva igrača dele deset karata i imaju po 20 poena. Karte se otkrivaju jedna po j
 - **Paketi karata kao podaci.** Python skripte prave JSON pakete iz tabela ocena: 150 fudbalera iz pet liga, 250 košarkaša iz NBA lige i Evrolige, 150 filmova i 20 jela. Validator proverava svaki paket.
 - **Rezultat koji liči na sport.** Zbir ocena određuje pobednika; `ScoreProjection` pretvara razliku po karti u fudbalski ili košarkaški rezultat, sa seed-om, pa ista partija uvek daje isti rezultat.
 
+Ceo dizajn je opisan na stranici [Arhitektura](/sr/projects/draft-duel/architecture/), a botovi imaju [svoju stranicu](/sr/projects/draft-duel/bots/).
+
 ## Izazovi i kako su rešeni
 
 - **Zvezde su vredele premalo.** Bez ograničenja broja karata, jeftine karte su pobeđivale zvezde. Podrazumevana pravila daju svakom igraču tačno pet mesta, pa svaka kupljena karta zauzima mesto boljoj. Plaćena predaja (1, pa 2, pa 3 poena) omogućava otvaraču da izbegne kartu koju ne želi.
@@ -34,10 +36,12 @@ Dva igrača dele deset karata i imaju po 20 poena. Karte se otkrivaju jedna po j
 - **Karte su se ponavljale između partija.** „Shuffle bag" po temi, sačuvan i posle restarta, vraća kartu tek kad se odigra ostatak paketa.
 - **Hrana se ne uklapa u ocene.** Recept mod boduje sastojke: pravi daju zbirno 100, a pogrešni oduzimaju poene. Otvarač sme da preskoči kartu, inače bi svaki pogrešan sastojak pao njemu.
 
+Svaka izmena od prve verzije navedena je u [Dnevniku izmena](/sr/projects/draft-duel/changelog/).
+
 ## Šta sledi
 
 Partije protiv pravih igrača preko interneta zahtevaju server. Za sada online modovi spajaju igrača sa botom, kako bi se ostatak aplikacije prvo istestirao.
 
 ## Privatnost
 
-Aplikacija nema nalog, analitiku, reklame ni dozvolu za internet. Podešavanja i spisak već odigranih karata ostaju na telefonu. Detalji su u [Politici privatnosti](/sr/privacy/draft-duel/).
+Aplikacija nema nalog, analitiku, reklame ni dozvolu za internet. Podešavanja i spisak već odigranih karata ostaju na telefonu. Detalji su u [Politici privatnosti](/sr/projects/draft-duel/privacy/).

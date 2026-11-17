@@ -1,39 +1,32 @@
 ---
+import { getEntry, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import { langFromPath } from '../i18n';
-import * as DraftDuelEn from '../legal/draft-duel.en.md';
-import * as DraftDuelSr from '../legal/draft-duel.sr.md';
 
 /**
- * Privacy policies of the apps, one page each, linked from their store listings
- * (Google Play needs a public, non-PDF URL). Text lives in src/legal/.
+ * Standalone app privacy policy pages (/privacy/<app>/), linked from the store
+ * listings; Google Play needs a stable public URL. The text is the app's
+ * "privacy" sub-page (src/content/subpages/<app>/privacy.md and its Serbian
+ * translation), so the policy has one source and also shows as a project tab.
  */
-const POLICIES = {
-  'draft-duel': {
-    app: 'Draft Duel',
-    updated: { en: '17 November 2026', sr: '17. novembar 2026.' },
-    content: { en: DraftDuelEn, sr: DraftDuelSr },
-  },
-} as const;
+const APPS = { 'draft-duel': 'Draft Duel' } as const;
 
 interface Props {
-  policy: keyof typeof POLICIES;
+  policy: keyof typeof APPS;
 }
 const lang = langFromPath(Astro.url.pathname);
-const policy = POLICIES[Astro.props.policy];
-const { Content } = policy.content[lang];
-const T = {
-  en: { label: 'Privacy policy', updated: 'Effective date' },
-  sr: { label: 'Politika privatnosti', updated: 'Važi od' },
-}[lang];
-const title = `${policy.app} — ${T.label}`;
+const id = `${Astro.props.policy}/privacy`;
+const entry = (lang === 'sr' && (await getEntry('subpagesSr', id))) || (await getEntry('subpages', id));
+if (!entry) throw new Error(`Missing privacy sub-page ${id}`);
+const { Content } = await render(entry);
+const app = APPS[Astro.props.policy];
+const label = lang === 'sr' ? 'Politika privatnosti' : 'Privacy policy';
 ---
 
-<Base title={title} description={`${T.label}: ${policy.app}`}>
+<Base title={`${app} — ${label}`} description={entry.data.summary}>
   <main class="site-wrap py-20">
-    <span class="tag-accent">{T.label}</span>
-    <h1 class="mt-5 max-w-3xl font-display text-h1 font-medium leading-105 tracking-tight">{policy.app}</h1>
-    <p class="mt-4 font-mono text-10 uppercase tracking-16 text-white-55">{T.updated}: {policy.updated[lang]}</p>
+    <span class="tag-accent">{label}</span>
+    <h1 class="mt-5 max-w-3xl font-display text-h1 font-medium leading-105 tracking-tight">{app}</h1>
     <div class="prose-tech mt-10 max-w-38">
       <Content />
     </div>

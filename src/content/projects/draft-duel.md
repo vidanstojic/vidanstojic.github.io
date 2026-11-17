@@ -39,6 +39,8 @@ Two players share ten cards and 20 points each. Cards come up one at a time: the
 - **Card packs as data.** Python scripts build JSON packs from rating tables: 150 footballers from five leagues, 250 basketball players from the NBA and EuroLeague, 150 films and 20 dishes. A validator checks every pack.
 - **A score that looks like the sport.** The rating total decides the winner; `ScoreProjection` turns the gap per card into a football or basketball result, seeded so the same match always gives the same score.
 
+The full design is on the [Architecture](/projects/draft-duel/architecture/) page, and the bots have a [page of their own](/projects/draft-duel/bots/).
+
 ## Challenges and how they were solved
 
 - **Stars were worth too little.** With unlimited cards, cheap cards beat stars. The default rules give each player exactly five slots, so every card bought takes the place of a better one. A paid hand-over (1, then 2, then 3 points) lets the opener avoid a card they don't want.
@@ -46,10 +48,12 @@ Two players share ten cards and 20 points each. Cards come up one at a time: the
 - **Cards repeating between matches.** A shuffle bag per theme, saved across restarts, brings a card back only after the rest of the pack has been played.
 - **Food doesn't fit ratings.** Recipe mode scores ingredients instead: the right ones add up to 100 and wrong ones subtract points. The opener may skip a card, otherwise every wrong ingredient would land on them.
 
+Every change since the first build is in the [Changelog](/projects/draft-duel/changelog/).
+
 ## What's next
 
 Online matches against real players need a server. Today the online modes pair you with a bot, so the rest of the app can be tested first.
 
 ## Privacy
 
-The app has no account, no analytics, no ads and no internet permission. Settings and the list of cards already played stay on the phone. Details are in the [Privacy policy](/privacy/draft-duel/).
+The app has no account, no analytics, no ads and no internet permission. Settings and the list of cards already played stay on the phone. Details are in the [Privacy policy](/projects/draft-duel/privacy/).

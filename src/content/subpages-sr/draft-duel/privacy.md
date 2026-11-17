@@ -1,3 +1,11 @@
+---
+title: Politika privatnosti za Draft Duel
+tab: Politika privatnosti
+summary: Šta Draft Duel čuva na vašem telefonu, jedina dozvola koju traži i šta nikada ne prikuplja. Važi od 17. novembra 2026.
+---
+
+_Važi od: 17. novembar 2026._
+
 Draft Duel („aplikacija“) je igra koju razvija Vidan Stojić, samostalni programer iz Beograda. Ova politika objašnjava šta aplikacija radi sa podacima o vama i vašem uređaju.
 
 ## Podaci koje prikupljamo
