@@ -34,9 +34,10 @@ export const NAV = [
 
 /** Layers top-down; `bg` gets darker with depth, `addr` is the layer's "address". */
 export const LAYER_INFO = {
-  interface: { name: 'Interface', blurb: 'Apps with their own users', addr: '0x1e00', bg: '#17171a' },
+  mobile: { name: 'Mobile apps', blurb: 'Apps with their own users', addr: '0x1e00', bg: '#19191c' },
+  desktop: { name: 'Desktop apps', blurb: 'Tools that run on your computer', addr: '0x1800', bg: '#151517' },
   services: { name: 'Services', blurb: 'Servers, APIs, real-time', addr: '0x1300', bg: '#121214' },
   data: { name: 'Data', blurb: 'Processing, storage, reports', addr: '0x0a00', bg: '#0d0d0f' },
-  language: { name: 'Language', blurb: 'Parsing and interpreting code', addr: '0x0400', bg: '#090909' },
+  compilers: { name: 'Compilers', blurb: 'Parsing and interpreting code', addr: '0x0400', bg: '#090909' },
   kernel: { name: 'Kernel', blurb: 'Inside the operating system', addr: '0x0000', bg: '#050505' },
 } as const;

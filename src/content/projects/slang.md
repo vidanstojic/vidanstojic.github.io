@@ -1,7 +1,7 @@
 ---
 title: Slang compiler and VM
 summary: A small statically typed language with a full pipeline — ANTLR parser, AST, type checker, bytecode generator and a stack-based virtual machine.
-layer: language
+layer: compilers
 stack: [Java, ANTLR]
 team: Team of 2
 context: Programming Translators course, RAF

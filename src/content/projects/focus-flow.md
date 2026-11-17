@@ -1,7 +1,7 @@
 ---
 title: Focus Flow
 summary: An Android app that tracks screen time and enforces the limits you set — app limits, schedules, a Shorts/Reels blocker and a smart alarm.
-layer: interface
+layer: mobile
 stack: [Kotlin, Jetpack Compose, Room, WorkManager, UsageStatsManager, AccessibilityService, JUnit]
 team: Solo
 context: Personal project, preparing for Google Play

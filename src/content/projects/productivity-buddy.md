@@ -1,7 +1,7 @@
 ---
 title: ProductivityBuddy
 summary: A JavaFX desktop app that watches running processes, lets you tag them as work or fun, and shows where your computer time goes in real time.
-layer: interface
+layer: desktop
 stack: [Java 21, JavaFX, Maven, OSHI]
 repo: https://github.com/vidanstojic/ProductivityBuddy
 context: University project

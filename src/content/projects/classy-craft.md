@@ -1,7 +1,7 @@
 ---
 title: Classy Craft
 summary: A Java desktop editor for UML class diagrams and mind maps, built around MVC and classic design patterns.
-layer: interface
+layer: desktop
 stack: [Java, Maven, MVC]
 team: Team of 2
 context: Software Design course, RAF

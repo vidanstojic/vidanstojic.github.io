@@ -4,9 +4,9 @@ import { z } from 'astro/zod';
 
 /**
  * Layers of the stack, bottom-up. The order here drives the order of the
- * stack bands (rendered top-down: interface first).
+ * stack bands (rendered top-down: mobile apps first).
  */
-export const LAYERS = ['kernel', 'language', 'data', 'services', 'interface'] as const;
+export const LAYERS = ['kernel', 'compilers', 'data', 'services', 'desktop', 'mobile'] as const;
 export type Layer = (typeof LAYERS)[number];
 
 export const STATUS_LABEL = {

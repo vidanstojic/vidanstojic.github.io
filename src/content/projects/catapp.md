@@ -1,7 +1,7 @@
 ---
 title: CatApp
 summary: An Android app for browsing cat breeds, with search, breed details and a photo gallery, built on MVI.
-layer: interface
+layer: mobile
 stack: [Kotlin, Jetpack Compose, Hilt, Room, DataStore, Coroutines]
 context: Mobile Application Development course, RAF
 repo: https://github.com/vidanstojic/CatApp---Mobile-application-development

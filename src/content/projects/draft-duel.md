@@ -1,7 +1,7 @@
 ---
 title: Draft Duel
 summary: A three-minute 1v1 mobile game where two players with the same budget bid on athletes to build the stronger starting five.
-layer: services
+layer: mobile
 stack: [Kotlin Multiplatform, Compose Multiplatform, Ktor, WebSocket, PostgreSQL]
 team: Solo
 context: Personal project, in design

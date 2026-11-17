@@ -50,10 +50,11 @@ const en = {
   langSwitchLabel: 'Ova stranica na srpskom',
 
   layers: {
-    interface: { name: 'Interface', blurb: 'Apps with their own users' },
+    mobile: { name: 'Mobile apps', blurb: 'Apps with their own users' },
+    desktop: { name: 'Desktop apps', blurb: 'Tools that run on your computer' },
     services: { name: 'Services', blurb: 'Servers, APIs, real-time' },
     data: { name: 'Data', blurb: 'Processing, storage, reports' },
-    language: { name: 'Language', blurb: 'Parsing and interpreting code' },
+    compilers: { name: 'Compilers', blurb: 'Parsing and interpreting code' },
     kernel: { name: 'Kernel', blurb: 'Inside the operating system' },
   },
   status: {
@@ -254,10 +255,11 @@ const sr: Dict = {
   langSwitchLabel: 'This page in English',
 
   layers: {
-    interface: { name: 'Interfejs', blurb: 'Aplikacije sa svojim korisnicima' },
+    mobile: { name: 'Mobilne aplikacije', blurb: 'Aplikacije sa svojim korisnicima' },
+    desktop: { name: 'Desktop aplikacije', blurb: 'Alati koji rade na računaru' },
     services: { name: 'Servisi', blurb: 'Serveri, API-ji, rad u realnom vremenu' },
     data: { name: 'Podaci', blurb: 'Obrada, skladištenje, izveštaji' },
-    language: { name: 'Jezik', blurb: 'Parsiranje i izvršavanje koda' },
+    compilers: { name: 'Kompajleri', blurb: 'Parsiranje i izvršavanje koda' },
     kernel: { name: 'Kernel', blurb: 'Unutar operativnog sistema' },
   },
   status: {
