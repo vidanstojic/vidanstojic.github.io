@@ -1,11 +1,11 @@
 ---
 title: Draft Duel
-summary: A three-minute 1v1 mobile game where two players with the same budget bid on athletes to build the stronger starting five.
+summary: "A quick 1v1 card auction for Android. Two players with 20 points each bid on ten cards, and the stronger team wins. Four themes: football, basketball, movies and food."
 layer: mobile
-stack: [Kotlin Multiplatform, Compose Multiplatform, Ktor, WebSocket, PostgreSQL]
+stack: [Kotlin Multiplatform, Compose Multiplatform, Coroutines, kotlinx.serialization, Python]
 team: Solo
-context: Personal project, in design
-status: in-progress
+context: Personal project, in closed testing on Google Play
+status: preparing-release
 icon: ../../assets/projects/draft-duel-icon.png
 gallery:
   - src: ../../assets/projects/draft-duel-home.png
@@ -21,30 +21,34 @@ gallery:
     alt: Card pool chosen by category, with England, France, Germany, Italy and Spain at 30 cards each
     caption: Football cards come from five leagues, 30 players each.
   - src: ../../assets/projects/draft-duel-states.svg
-    alt: Match state machine with states waiting, drawing, bidding, choosing, awarded, scoring, finished, paused and abandoned
-    caption: The match state machine from the specification.
+    alt: Match engine states - draw card, bidding, choosing, awarded, discarded and finished
+    caption: The match engine, one card at a time. Every arrow is a pure state transition.
 featured: true
 order: 5
 ---
 
 ## Problem and goal
 
-Two players share a pool of ten athlete cards and a budget of 20 points each. Cards come up one at a time and the players take turns raising or passing; whoever ends with the higher combined rating wins. A match should take three to five minutes, against a friend through a link or offline against a bot.
+Two players share ten cards and 20 points each. Cards come up one at a time: the opener bids, the rival raises or passes, and whoever takes the card pays their bid. Ratings stay hidden until you own a card, so you bid on what you know about the player, the film or the dish. A match takes three to five minutes, against one of six bots or with a friend on the same phone.
 
 ## Architecture and technical decisions
 
-- **One rules module, three consumers.** The game rules live in a pure Kotlin `commonMain` module with no I/O and a seeded shuffle. The Android client, the server and a bot-versus-bot simulator all run the same code.
-- **Authoritative server.** Online matches run on a Ktor WebSocket server. Clients send only intents (raise, pass, assign); the server validates turn, round and budget.
-- **Explicit state machine.** A match moves through drawing, bidding, choosing, awarded, scoring and finished, with pause and abandon for dropped connections.
-- **Only the order is secret.** Ratings and bids are public by design. The server shuffles the pool and never sends upcoming cards to the client.
+- **One codebase for Android and iOS.** Kotlin Multiplatform with Compose Multiplatform; every screen lives in shared code. Audio, haptics and storage sit behind `expect`/`actual` platform services.
+- **Rules as a pure reducer.** `MatchEngine.reduce(state, action)` returns the next state with no I/O and no clock. The UI, the bots and the tests all call the same function; a separate driver owns the turn timer and pauses.
+- **Six bots with personalities.** Each one values a card from the pack's statistics and its budget per empty slot. The strongest looks ahead with the expected best *k* of the remaining *n* cards (order statistics), cached per pack and rule set and computed off the UI thread.
+- **Card packs as data.** Python scripts build JSON packs from rating tables: 150 footballers from five leagues, 250 basketball players from the NBA and EuroLeague, 150 films and 20 dishes. A validator checks every pack.
+- **A score that looks like the sport.** The rating total decides the winner; `ScoreProjection` turns the gap per card into a football or basketball result, seeded so the same match always gives the same score.
 
 ## Challenges and how they were solved
 
-- **Duplicate and late messages.** Every action carries a round id and turn number; anything that isn't for the current turn gets `STALE` and changes nothing.
-- **Fair balance.** 10,000 bot-versus-bot matches will check that the first opener wins 45–55% of the time and that the budget is sized right. Property-based tests check invariants such as "a budget never goes negative".
-- **Edge cases in the rules.** A player with no budget left, or one with a full team, follows explicit rules written as a table of examples that become unit tests.
+- **Stars were worth too little.** With unlimited cards, cheap cards beat stars. The default rules give each player exactly five slots, so every card bought takes the place of a better one. A paid hand-over (1, then 2, then 3 points) lets the opener avoid a card they don't want.
+- **Balance.** 1,000 bot-versus-bot matches per pair set each bot's difficulty and check that the first opener wins about 48% of matches.
+- **Cards repeating between matches.** A shuffle bag per theme, saved across restarts, brings a card back only after the rest of the pack has been played.
+- **Food doesn't fit ratings.** Recipe mode scores ingredients instead: the right ones add up to 100 and wrong ones subtract points. The opener may skip a card, otherwise every wrong ingredient would land on them.
 
-The specification and UI design are done; implementation is next.
+## What's next
+
+Online matches against real players need a server. Today the online modes pair you with a bot, so the rest of the app can be tested first.
 
 ## Privacy
 

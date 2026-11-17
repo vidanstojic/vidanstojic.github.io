@@ -1,7 +1,7 @@
 ---
-summary: Trominutna 1v1 mobilna igra u kojoj dva igrača sa istim budžetom licitiraju za sportiste da bi sastavili jaču početnu petorku.
+summary: "Brza 1v1 aukcija karata za Android. Dva igrača sa po 20 poena licitiraju za deset karata, a pobeđuje jači tim. Četiri teme: fudbal, košarka, filmovi i hrana."
 team: Samostalno
-context: Lični projekat, u fazi dizajna
+context: Lični projekat, u zatvorenom testiranju na Google Play-u
 gallery:
   - alt: Početni ekran sa zelenim stolom za karte i četiri moda - protivnik, bot, isti telefon i prijatelj
     caption: Početni ekran. Svaki mod je brzi 1v1 duel.
@@ -11,28 +11,32 @@ gallery:
     caption: Sopstvena pravila. Botovi su podešeni za Default i Classic.
   - alt: Izbor karata po kategoriji - Engleska, Francuska, Nemačka, Italija i Španija sa po 30 karata
     caption: Fudbalske karte dolaze iz pet liga, po 30 igrača.
-  - alt: Mašina stanja meča sa stanjima čekanje, izvlačenje, licitiranje, biranje, dodeljeno, bodovanje, završeno, pauzirano i napušteno
-    caption: Mašina stanja meča iz specifikacije.
+  - alt: Stanja mehanizma partije - izvlačenje karte, licitiranje, biranje, dodeljeno, odbačeno i završeno
+    caption: Mehanizam partije, karta po karta. Svaka strelica je čist prelaz stanja.
 ---
 
 ## Problem i cilj
 
-Dva igrača dele skup od deset karata sa sportistima i imaju po 20 poena budžeta. Karte se otkrivaju jedna po jedna, a igrači naizmenično podižu ponudu ili odustaju; pobeđuje onaj sa većom ukupnom ocenom tima. Meč treba da traje tri do pet minuta, protiv prijatelja preko linka ili oflajn protiv bota.
+Dva igrača dele deset karata i imaju po 20 poena. Karte se otkrivaju jedna po jedna: otvarač nudi, protivnik podiže ili odustaje, a ko uzme kartu plaća svoju ponudu. Ocene ostaju skrivene dok kartu ne osvojite, pa se licitira na osnovu onoga što znate o igraču, filmu ili jelu. Partija traje tri do pet minuta, protiv jednog od šest botova ili sa prijateljem na istom telefonu.
 
 ## Arhitektura i tehničke odluke
 
-- **Jedan modul pravila, tri korisnika.** Pravila igre su u čistom Kotlin `commonMain` modulu, bez I/O operacija i sa mešanjem zasnovanim na seed-u. Android klijent, server i simulator bot protiv bota pokreću isti kod.
-- **Autoritativni server.** Onlajn mečevi rade na Ktor WebSocket serveru. Klijenti šalju samo namere (podigni, odustani, rasporedi); server proverava potez, rundu i budžet.
-- **Eksplicitna mašina stanja.** Meč prolazi kroz izvlačenje, licitiranje, biranje, dodelu, bodovanje i kraj, uz pauzu i napuštanje za prekinute veze.
-- **Tajan je samo redosled.** Ocene i ponude su namerno javne. Server meša karte i nikad ne šalje klijentu karte koje tek dolaze.
+- **Jedan kod za Android i iOS.** Kotlin Multiplatform sa Compose Multiplatform-om; svi ekrani su u zajedničkom kodu. Zvuk, vibracija i čuvanje podataka su iza `expect`/`actual` platformskih servisa.
+- **Pravila kao čist reducer.** `MatchEngine.reduce(state, action)` vraća sledeće stanje bez I/O operacija i bez sata. Interfejs, botovi i testovi pozivaju istu funkciju; poseban drajver vodi tajmer poteza i pauze.
+- **Šest botova sa ličnostima.** Svaki procenjuje kartu na osnovu statistike paketa i budžeta po praznom mestu. Najjači gleda unapred preko očekivanog zbira najboljih *k* od preostalih *n* karata (statistike poretka), keširano po paketu i pravilima i računato van UI niti.
+- **Paketi karata kao podaci.** Python skripte prave JSON pakete iz tabela ocena: 150 fudbalera iz pet liga, 250 košarkaša iz NBA lige i Evrolige, 150 filmova i 20 jela. Validator proverava svaki paket.
+- **Rezultat koji liči na sport.** Zbir ocena određuje pobednika; `ScoreProjection` pretvara razliku po karti u fudbalski ili košarkaški rezultat, sa seed-om, pa ista partija uvek daje isti rezultat.
 
 ## Izazovi i kako su rešeni
 
-- **Duplirane i zakasnele poruke.** Svaka akcija nosi ID runde i broj poteza; sve što ne pripada trenutnom potezu dobija `STALE` i ništa ne menja.
-- **Fer balans.** 10.000 mečeva bot protiv bota proveriće da prvi igrač pobeđuje u 45–55% slučajeva i da je budžet dobro odmeren. Testovi zasnovani na svojstvima proveravaju invarijante kao što je „budžet nikad ne ide u minus".
-- **Granični slučajevi u pravilima.** Igrač bez budžeta ili sa punim timom prati eksplicitna pravila zapisana kao tabela primera, koji postaju unit testovi.
+- **Zvezde su vredele premalo.** Bez ograničenja broja karata, jeftine karte su pobeđivale zvezde. Podrazumevana pravila daju svakom igraču tačno pet mesta, pa svaka kupljena karta zauzima mesto boljoj. Plaćena predaja (1, pa 2, pa 3 poena) omogućava otvaraču da izbegne kartu koju ne želi.
+- **Balans.** Po 1.000 partija bot protiv bota za svaki par određuje težinu svakog bota i proverava da prvi otvarač pobeđuje u oko 48% partija.
+- **Karte su se ponavljale između partija.** „Shuffle bag" po temi, sačuvan i posle restarta, vraća kartu tek kad se odigra ostatak paketa.
+- **Hrana se ne uklapa u ocene.** Recept mod boduje sastojke: pravi daju zbirno 100, a pogrešni oduzimaju poene. Otvarač sme da preskoči kartu, inače bi svaki pogrešan sastojak pao njemu.
 
-Specifikacija i dizajn interfejsa su gotovi; sledeći korak je implementacija.
+## Šta sledi
+
+Partije protiv pravih igrača preko interneta zahtevaju server. Za sada online modovi spajaju igrača sa botom, kako bi se ostatak aplikacije prvo istestirao.
 
 ## Privatnost
 
