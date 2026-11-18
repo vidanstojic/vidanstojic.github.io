@@ -23,12 +23,12 @@ const C = T.contact;
           <div class="grid gap-5 sm-grid-cols-2">
             <div class="field">
               <label for="f-name">{C.name}</label>
-              <input id="f-name" name="name" type="text" autocomplete="name" required />
+              <input id="f-name" name="name" type="text" autocomplete="name" maxlength="100" required />
               <p class="error" data-error="name"></p>
             </div>
             <div class="field">
               <label for="f-email">{C.email}</label>
-              <input id="f-email" name="email" type="email" autocomplete="email" required />
+              <input id="f-email" name="email" type="email" autocomplete="email" maxlength="254" required />
               <p class="error" data-error="email"></p>
             </div>
           </div>
@@ -42,7 +42,7 @@ const C = T.contact;
           </div>
           <div class="field mt-5">
             <label for="f-message">{C.message}</label>
-            <textarea id="f-message" name="message" required></textarea>
+            <textarea id="f-message" name="message" maxlength="5000" required></textarea>
             <p class="error" data-error="message"></p>
           </div>
           <input class="hp" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" />

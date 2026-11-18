@@ -20,9 +20,8 @@ export const SITE = {
   /** Profile photo in src/assets, e.g. 'profile.jpg'. Undefined: monogram. */
   photo: 'profile.jpg' as string | undefined,
   /**
-   * Optional Web3Forms access key (https://web3forms.com). It is public by design.
-   * Undefined: the form sends through FormSubmit (https://formsubmit.co) to `email`;
-   * FormSubmit asks the owner to confirm the address once, on the first message.
+   * Web3Forms access key (https://web3forms.com). It is public by design; the
+   * recipient address is fixed in the Web3Forms account, not by the page.
    */
   web3formsKey: '026e881b-c8d4-4150-ab90-51bf73fd1c4b' as string | undefined,
 };

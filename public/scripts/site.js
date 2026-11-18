@@ -485,42 +485,27 @@ function initContactForm() {
         submit.dataset.state = 'sending';
         try {
             const subject = `Portfolio: ${data.topic} from ${data.name}`;
-            // Web3Forms when an access key is configured; otherwise FormSubmit, which
-            // relays to the site owner's address (confirmed once by the owner).
-            const res = key
-                ? await fetch('https://api.web3forms.com/submit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                    body: JSON.stringify({
-                        access_key: key,
-                        subject,
-                        from_name: 'vidanstojic.me',
-                        name: data.name,
-                        email: data.email,
-                        topic: data.topic,
-                        message: data.message,
-                    }),
-                })
-                : await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(to)}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                    body: JSON.stringify({
-                        _subject: subject,
-                        _replyto: data.email,
-                        _template: 'table',
-                        _captcha: 'false',
-                        name: data.name,
-                        email: data.email,
-                        topic: data.topic,
-                        message: data.message,
-                    }),
-                });
+            // Web3Forms only. The recipient is fixed by the access key (it is set in the
+            // Web3Forms account), so a visitor cannot choose where the message goes.
+            // `botcheck` is the honeypot: Web3Forms rejects the message when it is filled.
+            if (!key)
+                throw new Error('Contact form is not configured');
+            const res = await fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                body: JSON.stringify({
+                    access_key: key,
+                    subject,
+                    from_name: 'vidanstojic.me',
+                    botcheck: false,
+                    name: String(data.name).slice(0, 100),
+                    email: String(data.email).slice(0, 254),
+                    topic: String(data.topic).slice(0, 40),
+                    message: String(data.message).slice(0, 5000),
+                }),
+            });
             const json = await res.json().catch(() => ({}));
-            const failed = !res.ok || json.success === false || json.success === 'false';
-            // FormSubmit's very first message asks the site owner to activate the form by
-            // email. The message itself is kept and delivered after activation.
-            const needsActivation = /activat/i.test(String(json.message ?? ''));
-            if (failed && !needsActivation)
+            if (!res.ok || json.success === false || json.success === 'false')
                 throw new Error(json.message || res.statusText);
             window.umami?.track('Contact sent', { topic: String(data.topic ?? '') });
             form.reset();
