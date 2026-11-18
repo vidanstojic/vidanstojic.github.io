@@ -32,6 +32,26 @@ const alternates = {
   sr: new URL(localize(Astro.url.pathname, 'sr'), Astro.site),
 };
 const otherPath = localize(Astro.url.pathname, other);
+
+// Scroll animations hide content until JS reveals it. If the site script ever fails
+// to load, this drops the flag after 2.5 s so the page is still fully readable.
+const FLAG_SCRIPT =
+  "document.documentElement.classList.add('js');setTimeout(function(){if(!window.__vsReady)document.documentElement.classList.remove('js')},2500);";
+// Content Security Policy. GitHub Pages cannot send headers, so it goes in a meta tag
+// (frame-ancestors is not available there). Scripts: this site, Umami and the one
+// inline script above by hash. Network: Web3Forms for the contact form, Umami for stats.
+const csp = [
+  "default-src 'self'",
+  `script-src 'self' https://cloud.umami.is 'sha256-${createHash('sha256').update(FLAG_SCRIPT).digest('base64')}'`,
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "font-src 'self' data:",
+  "connect-src 'self' https://api.web3forms.com https://cloud.umami.is https://gateway.umami.is",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  'upgrade-insecure-requests',
+].join('; ');
 const ogImage = new URL(image, Astro.site);
 // Tells search engines who the site belongs to and which profiles are the same person.
 const person = {
@@ -68,6 +88,8 @@ const MAIN_NAV = NAV.map((n) => ({
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Security-Policy" content={csp} />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>{title}</title>
     <meta name="description" content={description} />
     {!noindex && <link rel="canonical" href={canonical} />}
@@ -103,14 +125,7 @@ const MAIN_NAV = NAV.map((n) => ({
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={ogImage} />
     <script type="application/ld+json" set:html={JSON.stringify(person)} />
-    <script is:inline>
-      // Scroll animations hide content until JS reveals it. If the script ever fails
-      // to load, drop the flag after 2.5 s so the page is still fully readable.
-      document.documentElement.classList.add('js');
-      setTimeout(function () {
-        if (!window.__vsReady) document.documentElement.classList.remove('js');
-      }, 2500);
-    </script>
+    <script is:inline set:html={FLAG_SCRIPT} />
     <!-- Umami: cookie-free visit counts, only on the live domain -->
     <script
       is:inline
@@ -122,6 +137,7 @@ const MAIN_NAV = NAV.map((n) => ({
     <ClientRouter fallback="swap" />
   </head>
   <body>
+    <a class="skip-link" href="#content">{lang === 'sr' ? 'Preskoči na sadržaj' : 'Skip to content'}</a>
     <div class="min-h-screen bg-0a">
       <header class="site-header sticky top-0 z-50 border-b border-white-10 bg-0a-90" transition:persist={`site-header-${lang}`}>
         <div class="site-wrap flex h-16 items-center justify-between gap-4">
@@ -148,17 +164,17 @@ const MAIN_NAV = NAV.map((n) => ({
               href={localize('/contact/', lang)}>{T.nav.contact}</a
             >
           </nav>
-          <a
+          {!noindex && <a
             class="lang-switch"
             href={otherPath}
             hreflang={other}
             lang={HTML_LANG[other]}
-            aria-label={T.langSwitchLabel}
+            aria-label={`${T.langSwitchShort} – ${T.langSwitchLabel}`}
             title={T.langSwitch}
             data-lang-switch={other}
             data-umami-event="Language switch"
             data-umami-event-to={other}>{T.langSwitchShort}</a
-          >
+          >}
           <button
             class="menu-toggle"
             type="button"
@@ -197,7 +213,7 @@ const MAIN_NAV = NAV.map((n) => ({
         </div>
       </header>
 
-      <div transition:animate="fade">
+      <div id="content" tabindex="-1" transition:animate="fade">
         <slot />
       </div>
 

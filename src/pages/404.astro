@@ -24,12 +24,5 @@ const sr = UI.sr.notFound;
       <Icon name="arrow-left" class="icon-sm" /><span data-nf="back" data-sr={sr.back}>{en.back}</span>
     </a>
   </main>
-  <script is:inline define:vars={{ srTitle: sr.title }}>
-    if (/^\/sr(\/|$)/.test(location.pathname)) {
-      document.documentElement.lang = 'sr-Latn';
-      document.title = srTitle;
-      document.querySelectorAll('[data-nf]').forEach((el) => (el.textContent = el.dataset.sr));
-      document.querySelector('[data-nf-link]').setAttribute('href', '/sr/projects/');
-    }
-  </script>
+  <script is:inline src="/scripts/not-found.js" data-sr-title={sr.title}></script>
 </Base>

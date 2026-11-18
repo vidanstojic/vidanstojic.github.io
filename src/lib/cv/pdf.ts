@@ -323,10 +323,13 @@ function layout(projects: CvProject[], m: Measure, k: number) {
   ensure(50);
   emit({ t: 'text', x: x0, top: y, size: 8.07, font: 'b', color: INK, text: 'EXPERIENCE' });
   y += 16.3;
-  emit({ t: 'text', x: x0, top: y, size: 6.34, font: 'b', color: INK, text: CV_PERSON.experience.title });
-  y += 10.8;
-  bullets(CV_PERSON.experience.bullets);
-  y += 18.4;
+  CV_PERSON.experience.forEach((job, i) => {
+    ensure(24);
+    emit({ t: 'text', x: x0, top: y, size: 6.34, font: 'b', color: INK, text: job.title });
+    y += 10.8;
+    bullets(job.bullets);
+    y += i < CV_PERSON.experience.length - 1 ? 14.5 : 18.4;
+  });
   ensure(40);
   emit({ t: 'text', x: x0, top: y, size: 8.07, font: 'b', color: INK, text: 'Additional Activities and Interests' });
   y += 12.7;

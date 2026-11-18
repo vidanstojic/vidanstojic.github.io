@@ -1,7 +1,6 @@
 /**
- * Content of the CV. The default CV uses the six projects from Vidan's own CV,
- * with his wording; the other projects are written in the same style from the
- * case studies on the site. The home address is left out on purpose: the PDF is
+ * Content of the CV. Course projects from Vidan's original CV keep his wording;
+ * the other projects are written in the same style from the case studies on the site. The home address is left out on purpose: the PDF is
  * public, so only the city is shown.
  */
 
@@ -32,13 +31,13 @@ export const CV_PERSON = {
     },
   ],
   skills: [
-    { label: 'Programming languages:', text: 'Java, C++, Kotlin, C, Python, JavaScript, HTML, CSS' },
-    { label: 'Backend:', text: 'Spring Boot, Node.js' },
-    { label: 'Mobile applications:', text: 'Android (Jetpack Compose, Room, Retrofit)' },
+    { label: 'Programming languages:', text: 'Kotlin, Java, C, C++, C#, Python, TypeScript, JavaScript' },
+    { label: 'Mobile applications:', text: 'Android (Jetpack Compose, Room, Hilt, WorkManager, Coroutines), Kotlin Multiplatform, Compose Multiplatform' },
+    { label: 'Backend:', text: 'Spring Boot, Ktor, Node.js' },
     { label: 'Web:', text: 'Angular, React, HTML, CSS' },
-    { label: 'Databases:', text: 'MySQL' },
-    { label: 'Tools:', text: 'Git, Gradle, Maven' },
-    { label: 'Other:', text: 'AOP, JWT, WebSockets, REST API' },
+    { label: 'Databases:', text: 'PostgreSQL, MySQL' },
+    { label: 'Tools:', text: 'Git, Gradle, Maven, Docker, Linux' },
+    { label: 'Other:', text: 'REST API, WebSockets, RabbitMQ, JWT, AOP' },
   ] satisfies CvLabelled[],
   languages: ['English'],
   links: [
@@ -48,14 +47,20 @@ export const CV_PERSON = {
   ] satisfies CvLabelled[],
   about:
     'Sport has taught me that discipline and teamwork are the foundation of every success, both personal and team-based. My ambition is to gain top-tier experience through work on complex projects, which I could one day pass on to new colleagues. I am focused on constant growth through challenges that demand maximum concentration.',
-  experience: {
-    title: 'Private Tutoring (2024 - Present)',
-    bullets: [
-      'Individual tutoring of high school students in C++, Java, and C#',
-      'Individual tutoring and exam preparation for university students in C and Java',
-      'Debugging of university course projects',
-    ],
-  },
+  experience: [
+    {
+      title: 'Private Tutoring (2024 - Present)',
+      bullets: [
+        'Individual tutoring of high school students in C++, Java, and C#',
+        'Individual tutoring and exam preparation for university students in C and Java',
+        'Debugging of university course projects',
+      ],
+    },
+    {
+      title: 'Mentee, Mentor the Young (Sep - Dec 2026)',
+      bullets: ['Three-month programme that pairs young people in Serbia with experienced mentors'],
+    },
+  ],
   interests: [
     'Work in the service industry - developing communication skills, teamwork, and working under pressure',
     'Active in sports (basketball, football, boxing) - building discipline, persistence, and team spirit',
@@ -109,7 +114,7 @@ export const CV_PROJECTS: Record<string, CvProject> = {
   'focus-flow': {
     id: 'focus-flow',
     heading: '"Focus Flow" | Personal Project',
-    body: 'Development of an Android application for tracking screen time and enforcing user-defined limits, built with Kotlin and Jetpack Compose. Usage is reconstructed from raw UsageStatsManager events into sessions, split by hour and stored in a Room database. Daily app limits, schedules, session limits and a Shorts/Reels blocker based on an AccessibilityService are evaluated by a rules engine written in plain Kotlin, separated from the Android layer and covered by JUnit tests. The app also includes a smart alarm and works fully offline. It is currently being prepared for release on Google Play.',
+    body: 'Development of an Android application for tracking screen time and enforcing user-defined limits, built with Kotlin and Jetpack Compose. Usage is reconstructed from raw UsageStatsManager events into sessions, split by hour and stored in a Room database. Daily app limits, schedules, session limits and a Shorts/Reels blocker based on an AccessibilityService are evaluated by a rules engine written in plain Kotlin, separated from the Android layer and covered by JUnit tests. The app also includes a smart alarm and works fully offline. It is awaiting its production release on Google Play.',
     ...repo('Screen-Manager'),
   },
   'productivity-buddy': {
@@ -120,8 +125,9 @@ export const CV_PROJECTS: Record<string, CvProject> = {
   },
   'draft-duel': {
     id: 'draft-duel',
-    heading: '"Draft Duel" | Personal Project (in design)',
-    body: 'Design of a three-minute 1v1 mobile game in which two players with equal budgets bid on athletes to build the stronger team. The game rules are planned as a shared Kotlin Multiplatform module used by the Android client, a Ktor WebSocket server and a bot simulator. The server is authoritative: clients send only intents, and every action is validated against the current turn, round and budget. The specification and UI design are complete; implementation is the next step.',
+    heading: '"Draft Duel" | Personal Project',
+    body: 'Development of a 1v1 card auction game for Android in Kotlin Multiplatform and Compose Multiplatform, with every screen in shared code and platform services behind expect/actual. The match rules are a pure reducer with no I/O, called in the same way by the UI, six bots and the tests. The strongest bot looks ahead with order statistics over the remaining cards, and 1,000 bot-versus-bot matches per pair were used to balance the difficulty. Card packs are generated from rating tables with Python scripts and checked by a validator. The app is in closed testing on Google Play.',
+    ...repo('Draft-Duel'),
   },
   'banka-1': {
     id: 'banka-1',
@@ -149,5 +155,5 @@ export const CV_PROJECTS: Record<string, CvProject> = {
   },
 };
 
-/** The projects in Vidan's own CV, in his order. */
-export const DEFAULT_CV_PROJECTS = ['classy-craft', 'slang', 'report-generator', 'xv6', 'raf-cloud', 'catapp'];
+/** The standard CV: the two apps first, then the projects across the stack. */
+export const DEFAULT_CV_PROJECTS = ['focus-flow', 'draft-duel', 'raf-cloud', 'slang', 'xv6', 'productivity-buddy'];
